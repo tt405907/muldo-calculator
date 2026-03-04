@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muldo Breeding Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0a07;--surface:#14100c;--surface2:#1e1710;--border:#3a2e1e;
+    --gold:#c9a227;--gold-dim:#7a5e14;--text:#e8dcc8;--text-dim:#8a7a60;
+    --green:#34d399;--yellow:#f59e0b;--red:#f87171;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',Georgia,serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
+
+  .layout{position:relative;z-index:1;display:grid;grid-template-columns:290px 1fr;min-height:100vh;}
+
+  /* SIDEBAR */
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:18px;}
+  .logo{text-align:center;padding-bottom:14px;border-bottom:1px solid var(--border);}
+  .logo-orn{font-size:13px;color:var(--gold-dim);letter-spacing:8px;margin-bottom:5px;}
+  .logo h1{font-family:'Cinzel Decorative',serif;font-size:12px;color:var(--gold);letter-spacing:1px;line-height:1.5;}
+  .logo p{font-size:10px;color:var(--text-dim);font-style:italic;margin-top:2px;}
+
+  .sec{display:flex;flex-direction:column;gap:10px;}
+  .sec-title{font-family:'Cinzel Decorative',serif;font-size:8px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+  .sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  .field label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:4px;}
+  select{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:14px;padding:7px 28px 7px 10px;border-radius:2px;cursor:pointer;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a5e14' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;}
+  select:focus{outline:none;border-color:var(--gold-dim);}
+  select option{background:#1e1710;}
+
+  /* MULTIPLIER INPUT — free value */
+  .mult-block{background:linear-gradient(135deg,rgba(201,162,39,.08),rgba(201,162,39,.02));border:1px solid var(--gold-dim);border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .mult-top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .mult-top span{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
+  .mult-input-wrap{display:flex;align-items:center;gap:4px;}
+  .mult-x{font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold-dim);}
+  .mult-input{font-family:'Cinzel Decorative',serif;font-size:32px;color:var(--gold);background:transparent;border:none;border-bottom:2px solid var(--gold-dim);width:90px;text-align:center;outline:none;padding:2px 0;transition:border-color .2s;-moz-appearance:textfield;}
+  .mult-input:focus{border-color:var(--gold);}
+  .mult-input::-webkit-inner-spin-button,.mult-input::-webkit-outer-spin-button{appearance:none;}
+  .mult-btns{display:flex;gap:6px;}
+  .mult-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);font-family:'Cinzel Decorative',serif;font-size:11px;padding:5px 10px;border-radius:2px;cursor:pointer;transition:all .15s;flex:1;text-align:center;}
+  .mult-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+  .mult-sub{font-size:11px;color:var(--text-dim);text-align:center;font-style:italic;line-height:1.4;}
+
+  /* Final output badge */
+  .output-badge{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;}
+  .output-badge-row{display:flex;justify-content:space-between;align-items:center;}
+  .output-badge-row span{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .output-badge-val{font-family:'Cinzel Decorative',serif;font-size:22px;transition:color .3s;}
+
+  /* Toggles */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(58,46,30,.4);}
+  .toggle-row:last-child{border-bottom:none;}
+  .toggle-info span{font-size:12px;color:var(--text);display:block;}
+  .toggle-info small{font-size:10px;color:var(--text-dim);font-style:italic;}
+  .switch{position:relative;width:32px;height:17px;flex-shrink:0;margin-left:8px;}
+  .switch input{opacity:0;width:0;height:0;}
+  .switch-track{position:absolute;inset:0;background:var(--border);border-radius:20px;cursor:pointer;transition:background .2s;}
+  .switch input:checked+.switch-track{background:var(--gold-dim);}
+  .switch-track::before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:var(--text-dim);border-radius:50%;transition:transform .2s,background .2s;}
+  .switch input:checked+.switch-track::before{transform:translateX(15px);background:var(--gold);}
+
+  .sl-row{display:flex;flex-direction:column;gap:4px;}
+  .sl-hdr{display:flex;justify-content:space-between;}
+  .sl-hdr span{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+  .sl-hdr strong{font-family:'Cinzel Decorative',serif;font-size:13px;color:var(--gold);}
+  input[type=range]{width:100%;appearance:none;height:3px;background:var(--border);border-radius:2px;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);cursor:pointer;}
+  .sl-marks{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);}
+  .p-badge{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;}
+  .p-badge span{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .p-badge strong{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--gold);}
+
+  /* MAIN */
+  .main{padding:28px 24px;display:flex;flex-direction:column;gap:20px;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-height:400px;color:var(--text-dim);text-align:center;gap:10px;}
+  .empty-state .orn{font-size:36px;color:var(--border);}
+  .empty-state p{font-size:16px;font-style:italic;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;position:relative;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
+  .card-title{font-family:'Cinzel Decorative',serif;font-size:9px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+
+  /* Gen1 stock display */
+  .stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:10px;}
+  .scard{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:10px;text-align:center;transition:border-color .3s;}
+  .scard.active{border-color:var(--gold-dim);}
+  .scard-name{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+  .scard-val{font-family:'Cinzel Decorative',serif;font-size:24px;line-height:1;color:var(--gold);}
+  .scard-val.zero{color:var(--border);}
+  .stock-footer{display:flex;justify-content:flex-end;align-items:center;gap:6px;padding-top:8px;border-top:1px solid var(--border);font-size:13px;color:var(--text-dim);}
+  .stock-footer strong{font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold);}
+
+  /* Snowball cascade visual */
+  .cascade{display:flex;flex-direction:column;gap:0;}
+  .cascade-step{display:flex;align-items:stretch;gap:0;min-height:70px;}
+  .cascade-left{width:140px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 8px;gap:2px;}
+  .cascade-gen{font-family:'Cinzel Decorative',serif;font-size:8px;letter-spacing:2px;}
+  .cascade-name{font-size:12px;text-align:center;line-height:1.3;}
+  .cascade-center{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 14px;border-left:1px solid var(--border);}
+  .cascade-babies{display:flex;align-items:baseline;gap:6px;margin-bottom:4px;}
+  .cascade-babies-val{font-family:'Cinzel Decorative',serif;font-size:28px;line-height:1;transition:color .4s;}
+  .cascade-babies-unit{font-size:12px;color:var(--text-dim);}
+  .cascade-bar-outer{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative;}
+  .cascade-bar-inner{height:100%;border-radius:4px;transition:width .6s ease,background .4s;}
+  .cascade-bar-label{font-size:10px;color:var(--text-dim);margin-top:3px;display:flex;justify-content:space-between;}
+  .cascade-right{width:130px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px;border-left:1px solid var(--border);gap:3px;}
+  .cascade-att{font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold);}
+  .cascade-att-lbl{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;text-align:center;}
+
+  /* Arrow between steps */
+  .cascade-arrow{display:flex;align-items:center;padding:2px 0 2px 70px;gap:8px;font-size:10px;color:var(--text-dim);}
+  .cascade-arrow::before{content:'↓';font-size:14px;color:var(--border);}
+
+  /* Dead chain warning */
+  .dead-warning{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:3px;padding:8px 12px;font-size:12px;color:#f87171;font-style:italic;}
+
+  /* Final result */
+  .final-result{background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:3px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .final-result-label{font-size:13px;color:var(--text-dim);line-height:1.5;}
+  .final-result-label strong{color:var(--text);}
+  .final-result-val{font-family:'Cinzel Decorative',serif;font-size:36px;flex-shrink:0;transition:color .4s;}
+
+  /* Gen badges */
+  .gb{display:inline-block;font-family:'Cinzel Decorative',serif;font-size:8px;padding:2px 6px;border-radius:2px;letter-spacing:1px;border:1px solid currentColor;}
+  .g1{color:#9ca3af;}.g2{color:#6db85f;}.g3{color:#d97706;}.g4{color:#b45309;}
+  .g5{color:#60a5fa;}.g6{color:#a78bfa;}.g7{color:#f472b6;}.g8{color:#34d399;}
+  .g9{color:#f87171;}.g10{color:var(--gold);}
+
+  /* Tree */
+  .tree{display:flex;flex-direction:column;}
+  .tree-row{display:flex;align-items:center;min-height:34px;border-bottom:1px solid rgba(58,46,30,.2);padding:3px 0;}
+  .tree-row:last-child{border-bottom:none;}
+  .tree-lbl{font-family:'Cinzel Decorative',serif;font-size:8px;color:var(--text-dim);letter-spacing:1px;min-width:40px;flex-shrink:0;text-align:center;}
+  .tree-nodes{display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center;}
+  .tnode{display:inline-flex;padding:3px 8px;border-radius:2px;font-size:11px;border:1px solid;transition:all .2s;}
+  .tnode:hover{transform:translateY(-1px);filter:brightness(1.15);}
+  .tnode.g1{border-color:#6b7280;color:#9ca3af;background:rgba(107,114,128,.08);}
+  .tnode.g2{border-color:#4f7942;color:#6db85f;background:rgba(79,121,66,.08);}
+  .tnode.g3{border-color:#b45309;color:#d97706;background:rgba(180,83,9,.08);}
+  .tnode.g4{border-color:#92400e;color:#b45309;background:rgba(146,64,14,.08);}
+  .tnode.g5{border-color:#1d4ed8;color:#60a5fa;background:rgba(29,78,216,.1);}
+  .tnode.g6{border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,.1);}
+  .tnode.g7{border-color:#be185d;color:#f472b6;background:rgba(190,24,93,.1);}
+  .tnode.g8{border-color:#0f766e;color:#34d399;background:rgba(15,118,110,.1);}
+  .tnode.g9{border-color:#b91c1c;color:#f87171;background:rgba(185,28,28,.1);}
+  .tnode.g10{border-color:var(--gold-dim);color:var(--gold);background:rgba(201,162,39,.1);}
+
+  .info-note{font-size:11px;color:var(--text-dim);font-style:italic;line-height:1.7;padding:10px 12px;background:rgba(201,162,39,.04);border:1px solid rgba(201,162,39,.12);border-radius:2px;margin-top:14px;}
+
+
+  /* EXPLANATION SECTION */
+  .explain{max-width:100%;margin-top:4px;}
+  .explain-hero{background:linear-gradient(135deg,rgba(201,162,39,.07),rgba(201,162,39,.02));border:1px solid var(--gold-dim);border-radius:4px;padding:28px 32px;margin-bottom:20px;text-align:center;}
+  .explain-hero h2{font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;}
+  .explain-hero p{font-size:15px;color:var(--text-dim);font-style:italic;line-height:1.7;max-width:600px;margin:0 auto;}
+  .explain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+  .ecard{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;position:relative;}
+  .ecard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
+  .ecard-icon{font-size:24px;margin-bottom:10px;}
+  .ecard-title{font-family:'Cinzel Decorative',serif;font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+  .ecard p{font-size:13px;color:var(--text-dim);line-height:1.8;}
+  .ecard p strong{color:var(--text);}
+  .formula-block{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:14px 16px;margin:10px 0;font-family:'Crimson Pro',monospace;font-size:13px;line-height:2;}
+  .formula-block .f-line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .formula-block .f-label{color:var(--text-dim);font-size:11px;min-width:160px;text-align:right;flex-shrink:0;}
+  .formula-block .f-eq{color:var(--gold-dim);}
+  .formula-block .f-val{color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;}
+  .formula-block .f-note{color:var(--text-dim);font-size:11px;font-style:italic;}
+  .flow{display:flex;flex-direction:column;gap:0;margin:12px 0;}
+  .flow-step{display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;}
+  .flow-step-num{font-family:'Cinzel Decorative',serif;font-size:11px;color:var(--gold-dim);width:20px;flex-shrink:0;text-align:center;}
+  .flow-step-text{font-size:13px;color:var(--text-dim);line-height:1.5;}
+  .flow-step-text strong{color:var(--text);}
+  .flow-arrow{text-align:center;color:var(--border);font-size:12px;padding:2px 0;}
+  .ex-box{background:rgba(201,162,39,.05);border:1px solid rgba(201,162,39,.2);border-radius:3px;padding:14px 16px;margin-top:12px;}
+  .ex-box .ex-title{font-family:'Cinzel Decorative',serif;font-size:9px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+  .ex-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid rgba(58,46,30,.3);font-size:13px;}
+  .ex-row:last-child{border-bottom:none;}
+  .ex-row span{color:var(--text-dim);}
+  .ex-row strong{color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:15px;}
+  .live-demo{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:20px;position:relative;margin-bottom:20px;}
+  .live-demo::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
+  .demo-title{font-family:'Cinzel Decorative',serif;font-size:9px;color:var(--gold-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
+  .demo-controls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;align-items:center;}
+  .demo-ctrl{display:flex;flex-direction:column;gap:4px;}
+  .demo-ctrl label{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+  .demo-ctrl input[type=number]{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Cinzel Decorative',serif;font-size:18px;width:80px;text-align:center;padding:6px;border-radius:2px;outline:none;-moz-appearance:textfield;}
+  .demo-ctrl input::-webkit-inner-spin-button{appearance:none;}
+  .demo-ctrl input:focus{border-color:var(--gold-dim);}
+  .demo-ctrl select{font-size:13px;padding:6px 24px 6px 8px;}
+  .demo-result{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .demo-rbox{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:10px;text-align:center;}
+  .demo-rbox .drv{font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);line-height:1;margin-bottom:3px;transition:color .3s;}
+  .demo-rbox .drl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .chain-viz{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:12px 0;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;}
+  .chain-node{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .chain-node .cn-val{font-family:'Cinzel Decorative',serif;font-size:14px;color:var(--gold);transition:color .3s;}
+  .chain-node .cn-lbl{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .chain-arr{font-size:16px;color:var(--border);padding:0 2px;margin-bottom:12px;}
+  .chain-op{font-size:11px;color:var(--text-dim);padding:0 2px;margin-bottom:12px;}
+
+
+  .site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:relative;z-index:1;}
+  .site-footer-credit{display:flex;flex-direction:column;gap:4px;}
+  .site-footer-credit span{font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+  .site-footer-credit a{font-family:'Cinzel Decorative',serif;font-size:15px;color:var(--gold);text-decoration:none;letter-spacing:1px;transition:color .2s;}
+  .site-footer-credit a:hover{color:var(--gold-light);}
+  .site-footer-sub{font-size:12px;color:var(--text-dim);font-style:italic;}
+  .site-footer-sub a{color:var(--gold-dim);text-decoration:none;border-bottom:1px solid var(--gold-dim);padding-bottom:1px;transition:color .2s,border-color .2s;}
+  .site-footer-sub a:hover{color:var(--gold);border-color:var(--gold);}
+  .site-footer-right{text-align:right;display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+  .site-footer-update{font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;}
+  .site-footer-update span{color:var(--gold-dim);}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .fade{animation:fadeIn .3s ease forwards;}
+  @media(max-width:720px){.layout{grid-template-columns:1fr;}.sidebar{position:static;height:auto;}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-orn">✦ ✦ ✦</div>
+    <h1>Muldo Breeding Calculator</h1>
+    <p>Effet boule de neige en cascade</p>
+    <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;">
+      Mis à jour le 4 mars 2026
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Muldo cible</div>
+    <div class="field">
+      <label>Génération</label>
+      <select id="sel-gen" onchange="onGenChange()">
+        <option value="">— Choisir —</option>
+        <option value="2">Génération 2</option><option value="3">Génération 3</option>
+        <option value="4">Génération 4</option><option value="5">Génération 5</option>
+        <option value="6">Génération 6</option><option value="7">Génération 7</option>
+        <option value="8">Génération 8</option><option value="9">Génération 9</option>
+        <option value="10">Génération 10</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Muldo</label>
+      <select id="sel-muldo" onchange="recalc()">
+        <option value="">— Choisir d'abord la génération —</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- HERO: free multiplier -->
+  <div class="sec">
+    <div class="sec-title">Multiplicateur de Gen 1</div>
+    <div class="mult-block">
+      <div class="mult-top">
+        <span>Quantité</span>
+        <div class="mult-input-wrap">
+          <span class="mult-x">×</span>
+          <input type="number" id="mult-input" class="mult-input" min="1" value="1"
+            oninput="recalc()" onchange="clampMult()">
+        </div>
+      </div>
+      <div class="mult-btns">
+        <div class="mult-btn" onclick="setMult(1)">×1</div>
+        <div class="mult-btn" onclick="setMult(2)">×2</div>
+        <div class="mult-btn" onclick="setMult(5)">×5</div>
+        <div class="mult-btn" onclick="setMult(10)">×10</div>
+        <div class="mult-btn" onclick="setMult(50)">×50</div>
+      </div>
+      <div class="mult-sub" id="mult-sub">Stock minimum — 1 paire de Gen 1 par étape</div>
+    </div>
+
+    <div class="output-badge">
+      <div class="output-badge-row">
+        <span>Bébés cible attendus</span>
+        <div class="output-badge-val" id="badge-out" style="color:var(--text-dim)">—</div>
+      </div>
+      <div class="output-badge-row" style="margin-top:4px">
+        <span>Total animaux Gen 1 (♂+♀)</span>
+        <div class="output-badge-val" style="font-size:16px;color:var(--gold)" id="badge-total">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bonus -->
+  <div class="sec">
+    <div class="sec-title">Bonus</div>
+    <div class="sl-row">
+      <div class="sl-hdr"><span>Niveau des parents</span><strong id="lbl-level">1</strong></div>
+      <input type="range" id="sl-level" min="1" max="200" value="1"
+        oninput="document.getElementById('lbl-level').textContent=this.value;recalc()">
+      <div class="sl-marks"><span>1</span><span>100</span><span>200</span></div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><span>Clonage des stériles</span><small>+30% tentatives effectives</small></div>
+      <label class="switch"><input type="checkbox" id="sw-clone" checked onchange="recalc()"><span class="switch-track"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><span>Optimakina</span><small>+10% / accouplement</small></div>
+      <label class="switch"><input type="checkbox" id="sw-opti" onchange="recalc()"><span class="switch-track"></span></label>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><span>Capacité Reproducteur</span><small>+5% bébés effectifs</small></div>
+      <label class="switch"><input type="checkbox" id="sw-repro" onchange="recalc()"><span class="switch-track"></span></label>
+    </div>
+    <div class="p-badge">
+      <span>Prob. / accouplement</span>
+      <strong id="p-per-acc">30.2%</strong>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main" id="main-area">
+  <div class="empty-state">
+    <div class="orn">⚗</div>
+    <p>Sélectionnez un Muldo cible<br>et ajustez le multiplicateur</p>
+  </div>
+</main>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────
+const GEN1 = ['orchidée','ébène','indigo','pourpre','doré'];
+const MULDOS = {
+  'doré et pourpre':{gen:2,p:['doré','pourpre']},'indigo et pourpre':{gen:2,p:['indigo','pourpre']},
+  'ébène et pourpre':{gen:2,p:['ébène','pourpre']},'orchidée et pourpre':{gen:2,p:['orchidée','pourpre']},
+  'doré et orchidée':{gen:2,p:['doré','orchidée']},'indigo et orchidée':{gen:2,p:['indigo','orchidée']},
+  'ébène et orchidée':{gen:2,p:['ébène','orchidée']},'doré et indigo':{gen:2,p:['doré','indigo']},
+  'ébène et indigo':{gen:2,p:['ébène','indigo']},'doré et ébène':{gen:2,p:['doré','ébène']},
+  'roux':{gen:3,p:['doré','pourpre']},'amande':{gen:3,p:['indigo','pourpre']},
+  'roux et pourpre':{gen:4,p:['pourpre','roux']},'roux et orchidée':{gen:4,p:['orchidée','roux']},
+  'roux et indigo':{gen:4,p:['roux','indigo']},'roux et ébène':{gen:4,p:['roux','ébène']},
+  'roux et doré':{gen:4,p:['roux','doré']},'roux et amande':{gen:4,p:['roux','amande']},
+  'pourpre et amande':{gen:4,p:['pourpre','amande']},'orchidée et amande':{gen:4,p:['orchidée','amande']},
+  'indigo et amande':{gen:4,p:['indigo','amande']},'ébène et amande':{gen:4,p:['ébène','amande']},
+  'doré et amande':{gen:4,p:['doré','amande']},
+  'ivoire':{gen:5,p:['roux','doré']},'turquoise':{gen:5,p:['roux','ébène']},
+  'pourpre et ivoire':{gen:6,p:['pourpre','ivoire']},'orchidée et ivoire':{gen:6,p:['orchidée','ivoire']},
+  'indigo et ivoire':{gen:6,p:['indigo','ivoire']},'ébène et ivoire':{gen:6,p:['ébène','ivoire']},
+  'doré et ivoire':{gen:6,p:['doré','ivoire']},'roux et ivoire':{gen:6,p:['roux','ivoire']},
+  'amande et ivoire':{gen:6,p:['amande','ivoire']},'turquoise et ivoire':{gen:6,p:['turquoise','ivoire']},
+  'turquoise et pourpre':{gen:6,p:['turquoise','pourpre']},'turquoise et indigo':{gen:6,p:['turquoise','indigo']},
+  'turquoise et ébène':{gen:6,p:['turquoise','ébène']},'turquoise et roux':{gen:6,p:['turquoise','roux']},
+  'turquoise et amande':{gen:6,p:['turquoise','amande']},'turquoise et doré':{gen:6,p:['turquoise','doré']},
+  'turquoise et orchidée':{gen:6,p:['turquoise','orchidée']},
+  'émeraude':{gen:7,p:['turquoise','ivoire']},'prune':{gen:7,p:['ébène','ivoire']},
+  'prune et pourpre':{gen:8,p:['prune','pourpre']},'prune et orchidée':{gen:8,p:['prune','orchidée']},
+  'prune et indigo':{gen:8,p:['prune','indigo']},'prune et ébène':{gen:8,p:['prune','ébène']},
+  'prune et doré':{gen:8,p:['prune','doré']},'prune et roux':{gen:8,p:['prune','roux']},
+  'prune et amande':{gen:8,p:['prune','amande']},'prune et ivoire':{gen:8,p:['prune','ivoire']},
+  'prune et turquoise':{gen:8,p:['prune','turquoise']},'prune et émeraude':{gen:8,p:['prune','émeraude']},
+  'pourpre et émeraude':{gen:8,p:['pourpre','émeraude']},'orchidée et émeraude':{gen:8,p:['orchidée','émeraude']},
+  'indigo et émeraude':{gen:8,p:['indigo','émeraude']},'ébène et émeraude':{gen:8,p:['ébène','émeraude']},
+  'doré et émeraude':{gen:8,p:['doré','émeraude']},'roux et émeraude':{gen:8,p:['roux','émeraude']},
+  'amande et émeraude':{gen:8,p:['amande','émeraude']},'ivoire et émeraude':{gen:8,p:['ivoire','émeraude']},
+  'turquoise et émeraude':{gen:8,p:['turquoise','émeraude']},
+  'ambre':{gen:9,p:['pourpre','émeraude']},'corail':{gen:9,p:['prune','pourpre']},
+  'azur':{gen:9,p:['pourpre','émeraude']},'aigue-marine':{gen:9,p:['prune','pourpre']},
+  'ambre et doré':{gen:10,p:['ambre','doré']},'ambre et ébène':{gen:10,p:['ambre','ébène']},
+  'ambre et indigo':{gen:10,p:['ambre','indigo']},'ambre et pourpre':{gen:10,p:['ambre','pourpre']},
+  'ambre et orchidée':{gen:10,p:['ambre','orchidée']},'ambre et amande':{gen:10,p:['ambre','amande']},
+  'ambre et rousse':{gen:10,p:['ambre','roux']},'ambre et ivoire':{gen:10,p:['ambre','ivoire']},
+  'ambre et turquoise':{gen:10,p:['ambre','turquoise']},'ambre et émeraude':{gen:10,p:['ambre','émeraude']},
+  'ambre et prune':{gen:10,p:['ambre','prune']},'ambre et corail':{gen:10,p:['ambre','corail']},
+  'ambre et azur':{gen:10,p:['ambre','azur']},'ambre et aigue-marine':{gen:10,p:['ambre','aigue-marine']},
+  'corail et doré':{gen:10,p:['corail','doré']},'corail et ébène':{gen:10,p:['corail','ébène']},
+  'corail et indigo':{gen:10,p:['corail','indigo']},'corail et pourpre':{gen:10,p:['corail','pourpre']},
+  'corail et orchidée':{gen:10,p:['corail','orchidée']},'corail et amande':{gen:10,p:['corail','amande']},
+  'corail et rousse':{gen:10,p:['corail','roux']},'corail et ivoire':{gen:10,p:['corail','ivoire']},
+  'corail et turquoise':{gen:10,p:['corail','turquoise']},'corail et émeraude':{gen:10,p:['corail','émeraude']},
+  'corail et prune':{gen:10,p:['corail','prune']},'corail et azur':{gen:10,p:['corail','azur']},
+  'corail et aigue-marine':{gen:10,p:['corail','aigue-marine']},
+  'azur et doré':{gen:10,p:['azur','doré']},'azur et ébène':{gen:10,p:['azur','ébène']},
+  'azur et indigo':{gen:10,p:['azur','indigo']},'azur et pourpre':{gen:10,p:['azur','pourpre']},
+  'azur et orchidée':{gen:10,p:['azur','orchidée']},'azur et amande':{gen:10,p:['azur','amande']},
+  'azur et rousse':{gen:10,p:['azur','roux']},'azur et ivoire':{gen:10,p:['azur','ivoire']},
+  'azur et turquoise':{gen:10,p:['azur','turquoise']},'azur et émeraude':{gen:10,p:['azur','émeraude']},
+  'azur et prune':{gen:10,p:['azur','prune']},'azur et aigue-marine':{gen:10,p:['azur','aigue-marine']},
+  'aigue-marine et doré':{gen:10,p:['aigue-marine','doré']},'aigue-marine et ébène':{gen:10,p:['aigue-marine','ébène']},
+  'aigue-marine et indigo':{gen:10,p:['aigue-marine','indigo']},'aigue-marine et pourpre':{gen:10,p:['aigue-marine','pourpre']},
+  'aigue-marine et orchidée':{gen:10,p:['aigue-marine','orchidée']},'aigue-marine et amande':{gen:10,p:['aigue-marine','amande']},
+  'aigue-marine et rousse':{gen:10,p:['aigue-marine','roux']},'aigue-marine et ivoire':{gen:10,p:['aigue-marine','ivoire']},
+  'aigue-marine et turquoise':{gen:10,p:['aigue-marine','turquoise']},'aigue-marine et émeraude':{gen:10,p:['aigue-marine','émeraude']},
+  'aigue-marine et prune':{gen:10,p:['aigue-marine','prune']},
+};
+
+// ── HELPERS ──────────────────────────────────────────────────
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const getGen = n => GEN1.includes(n)?1:(MULDOS[n]?.gen??1);
+const gc = g => 'g'+Math.min(g,10);
+function calcP(level,opti,repro){return Math.min(1,(30+level*2*0.15+(opti?10:0)+(repro?5:0))/100);}
+
+function col(v){
+  // v = expected babies (not a prob). color by magnitude
+  if(v>=10)return'#34d399';
+  if(v>=3)return'var(--gold)';
+  if(v>=1)return'#f59e0b';
+  return'#f87171';
+}
+function colOut(v){
+  if(v>=2)return'#34d399';
+  if(v>=1)return'var(--gold)';
+  if(v>=0.5)return'#f59e0b';
+  return'#f87171';
+}
+function fmt(v){
+  if(v>=100) return Math.round(v).toString();
+  if(v>=10) return v.toFixed(1);
+  if(v>=1) return v.toFixed(2);
+  return v.toFixed(3);
+}
+
+// ── TOPOLOGY ─────────────────────────────────────────────────
+function buildSteps(target){
+  const steps=[],vis=new Set();
+  function walk(n){
+    if(vis.has(n))return;vis.add(n);
+    if(GEN1.includes(n))return;
+    const d=MULDOS[n];if(!d)return;
+    walk(d.p[0]);walk(d.p[1]);
+    steps.push({name:n,parents:d.p,gen:d.gen});
+  }
+  walk(target);return steps;
+}
+
+function buildTreeMap(target){
+  const map=new Map(),vis=new Set();
+  function walk(n){
+    if(vis.has(n))return;vis.add(n);
+    const g=getGen(n);
+    if(!map.has(g))map.set(g,[]);
+    map.get(g).push(n);
+    const d=MULDOS[n];if(d){walk(d.p[0]);walk(d.p[1]);}
+  }
+  walk(target);return map;
+}
+
+// ── CORE: snowball compute ────────────────────────────────────
+// KEY FIX: a parent (e.g. Roux) may be needed by multiple downstream steps.
+// Instead of consuming sequentially (first step eats everything), we split
+// each parent's production fairly across all steps that need it.
+//
+// Algorithm:
+//   1. Count how many steps need each parent → needs[name]
+//   2. production[name] = stock for Gen1, or babies produced by its step
+//   3. Each step's share of parent P = production[P] / needs[P]
+//   4. attempts = min(shareA, shareB) × cloneMult
+//   5. babies = attempts × p → stored in production[step.name]
+
+function compute(target, p, mult, useClone){
+  const steps = buildSteps(target);
+  const cloneMult = useClone ? 1.3 : 1.0;
+
+  // Count how many times each name appears as a parent
+  const needs = {};
+  steps.forEach(s=>s.parents.forEach(pn=>{ needs[pn]=(needs[pn]||0)+1; }));
+
+  // Minimum Gen1 stock = needs[name] × 1 (one pair per usage)
+  const minGen1 = {};
+  GEN1.forEach(n=>minGen1[n]=needs[n]||0);
+
+  // Actual stock with multiplier
+  const stock = {};
+  GEN1.forEach(n=>stock[n]=(minGen1[n]||0)*mult);
+
+  // production[name] = total available supply of that muldo
+  // Gen1: from stock. Intermediates: computed step by step.
+  const production = {};
+  GEN1.forEach(n=>production[n]=stock[n]);
+
+  let maxBabies = 1;
+
+  const enriched = steps.map((step,i)=>{
+    const [pa,pb] = step.parents;
+    // Fair share: each step that needs this parent gets production/needs
+    const shareA = (production[pa]||0) / (needs[pa]||1);
+    const shareB = (production[pb]||0) / (needs[pb]||1);
+    const pairs   = Math.min(shareA, shareB);
+    const attempts = pairs * cloneMult;
+    const babies   = attempts * p;
+
+    production[step.name] = (production[step.name]||0) + babies;
+    if(babies > maxBabies) maxBabies = babies;
+
+    return{...step, shareA, shareB, pairs, attempts, babies};
+  });
+
+  // Normalize bars
+  enriched.forEach(s=>s.barPct = Math.min(100, s.babies/maxBabies*100));
+
+  const finalBabies = enriched.length>0 ? enriched[enriched.length-1].babies : 0;
+  const gen1Needs = {};
+  // ×2 for sex ratio: each pair requires 1 male + 1 female captured
+  GEN1.forEach(n=>gen1Needs[n]=(stock[n]||0)*2);
+  const totalGen1 = Object.values(gen1Needs).reduce((a,b)=>a+b,0);
+
+  return{enriched, gen1Needs, minGen1, totalGen1, finalBabies, treeMap:buildTreeMap(target)};
+}
+
+// ── UI ────────────────────────────────────────────────────────
+function getMult(){
+  const v = parseFloat(document.getElementById('mult-input').value);
+  return isNaN(v)||v<1 ? 1 : v;
+}
+function setMult(v){
+  document.getElementById('mult-input').value=v;
+  recalc();
+}
+function clampMult(){
+  const el=document.getElementById('mult-input');
+  const v=parseFloat(el.value);
+  if(isNaN(v)||v<1) el.value=1;
+  recalc();
+}
+function getParams(){
+  return{
+    mult: getMult(),
+    level: parseInt(document.getElementById('sl-level').value)||1,
+    opti:  document.getElementById('sw-opti').checked,
+    repro: document.getElementById('sw-repro').checked,
+    clone: document.getElementById('sw-clone').checked,
+  };
+}
+function onGenChange(){
+  const gen=parseInt(document.getElementById('sel-gen').value);
+  const sel=document.getElementById('sel-muldo');
+  sel.innerHTML='<option value="">— Choisir —</option>';
+  if(!gen)return;
+  Object.entries(MULDOS).filter(([,v])=>v.gen===gen).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([name])=>{
+    const o=document.createElement('option');o.value=name;o.textContent=cap(name);sel.appendChild(o);
+  });
+  recalc();
+}
+
+let lastTarget=null;
+
+function recalc(){
+  const{mult,level,opti,repro,clone}=getParams();
+  const p=calcP(level,opti,repro);
+  document.getElementById('p-per-acc').textContent=(p*100).toFixed(1)+'%';
+
+  // Update mult subtitle
+  const sub = mult<=1
+    ? 'Stock minimum — 1 paire de Gen 1 par étape'
+    : `×${mult} le minimum — ${((mult-1)*100).toFixed(0)}% de montures en plus`;
+  document.getElementById('mult-sub').textContent=sub;
+
+  const name=document.getElementById('sel-muldo').value;
+  const main=document.getElementById('main-area');
+  if(!name){
+    main.innerHTML=`<div class="empty-state"><div class="orn">⚗</div><p>Sélectionnez un Muldo cible<br>et ajustez le multiplicateur</p></div>`;
+    lastTarget=null;return;
+  }
+
+  const R=compute(name,p,mult,clone);
+
+  // Update sidebar badges
+  const bo=document.getElementById('badge-out');
+  bo.textContent=fmt(R.finalBabies);
+  bo.style.color=colOut(R.finalBabies);
+  document.getElementById('badge-total').textContent=R.totalGen1;
+
+  if(lastTarget===name && main.querySelector('#cascade-wrap')){
+    softUpdate(R,p);
+    return;
+  }
+  lastTarget=name;
+  renderFull(name,R,p);
+}
+
+function softUpdate(R,p){
+  // Update stock cards
+  GEN1.forEach(n=>{
+    const el=document.getElementById('sv-'+n);
+    if(!el)return;
+    const v=R.gen1Needs[n];
+    el.textContent=v;
+    el.className='scard-val'+(v>0?' ':'  zero');
+    const card=document.getElementById('sc-'+n);
+    if(card) card.className='scard'+(v>0?' active':'');
+  });
+  document.getElementById('total-val').textContent=R.totalGen1;
+
+  // Update cascade steps
+  R.enriched.forEach((step,i)=>{
+    const bEl=document.getElementById('cb-'+i);
+    if(bEl){
+      bEl.textContent=fmt(step.babies);
+      bEl.style.color=col(step.babies);
+    }
+    const barEl=document.getElementById('cbar-'+i);
+    if(barEl){
+      barEl.style.width=step.barPct.toFixed(1)+'%';
+      barEl.style.background=col(step.babies);
+    }
+    const attEl=document.getElementById('catt-'+i);
+    if(attEl) attEl.textContent=fmt(step.attempts);
+    const lEl=document.getElementById('cleft-'+i);
+    if(lEl) lEl.innerHTML=`${fmt(step.pairs)} paires → <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives`;
+    const pEl=document.getElementById('cprob-'+i);
+    if(pEl) pEl.innerHTML=`× ${(p*100).toFixed(1)}% = <span style="color:${col(step.babies)}">${fmt(step.babies)}</span>`;
+  });
+
+  // Update final result
+  const fr=document.getElementById('final-babies');
+  if(fr){
+    fr.textContent=fmt(R.finalBabies);
+    fr.style.color=colOut(R.finalBabies);
+  }
+  renderTree(R);
+}
+
+function renderTree(R){
+  const el=document.getElementById('tree-el');if(!el)return;
+  el.innerHTML='';
+  [...R.treeMap.keys()].sort((a,b)=>a-b).forEach(gen=>{
+    const row=document.createElement('div');row.className='tree-row';
+    const lbl=document.createElement('div');lbl.className='tree-lbl';lbl.textContent='GEN '+gen;
+    const nodes=document.createElement('div');nodes.className='tree-nodes';
+    R.treeMap.get(gen).forEach(mName=>{
+      const node=document.createElement('div');node.className='tnode '+gc(gen);
+      node.textContent=cap(mName);nodes.appendChild(node);
+    });
+    row.appendChild(lbl);row.appendChild(nodes);el.appendChild(row);
+  });
+}
+
+function renderFull(name,R,p){
+  const main=document.getElementById('main-area');
+  main.innerHTML='';
+
+  // Card 1: Gen1 stock
+  const c1=document.createElement('div');c1.className='card fade';
+  let sg='<div class="stock-grid">';
+  GEN1.forEach(n=>{
+    const v=R.gen1Needs[n], m=R.minGen1[n];
+    sg+=`<div class="scard${v>0?' active':''}" id="sc-${n}">
+      <div class="scard-name">${cap(n)}</div>
+      <div class="scard-val${v>0?'':' zero'}" id="sv-${n}">${v}</div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:3px">${m>0?'min. '+(m*2)+' captures':'non requis'}</div>
+    </div>`;
+  });
+  sg+='</div>';
+  sg+=`<div class="stock-footer"><span>Total</span><strong id="total-val">${R.totalGen1}</strong> animaux Gen 1 à capturer (ratio ♂♀)</div>`;
+  c1.innerHTML=`<div class="card-title">✦ Stock Gen 1 à capturer</div>${sg}`;
+  main.appendChild(c1);
+
+  // Card 2: tree
+  const c2=document.createElement('div');c2.className='card fade';
+  c2.innerHTML=`<div class="card-title">✦ Arbre de production</div><div style="overflow-x:auto"><div class="tree" id="tree-el"></div></div>`;
+  main.appendChild(c2);
+  renderTree(R);
+
+  // Card 3: snowball cascade
+  const c3=document.createElement('div');c3.className='card fade';
+
+  let cascHtml=`<div class="card-title">✦ Effet boule de neige — bébés produits à chaque étape</div><div class="cascade" id="cascade-wrap">`;
+  R.enriched.forEach((step,i)=>{
+    const isFinal=i===R.enriched.length-1;
+    const c=col(step.babies);
+    const parentDesc=step.parents.map(pn=>
+      `<span style="color:${GEN1.includes(pn)?'#f59e0b':'var(--text-dim)'}">${cap(pn)}</span>`
+    ).join(' + ');
+
+    cascHtml+=`<div class="cascade-step">
+      <div class="cascade-left">
+        <span class="gb ${gc(step.gen)}" style="margin-bottom:4px">GEN ${step.gen}</span>
+        <div class="cascade-name" style="color:${c}">${cap(step.name)}</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:3px">${parentDesc}</div>
+      </div>
+      <div class="cascade-center">
+        <div class="cascade-babies">
+          <div class="cascade-babies-val" id="cb-${i}" style="color:${c}">${fmt(step.babies)}</div>
+          <div class="cascade-babies-unit">bébés attendus</div>
+        </div>
+        <div class="cascade-bar-outer">
+          <div class="cascade-bar-inner" id="cbar-${i}" style="width:${step.barPct.toFixed(1)}%;background:${c}"></div>
+        </div>
+        <div class="cascade-bar-label">
+          <span id="cleft-${i}" style="color:var(--text-dim);font-size:10px">${fmt(step.pairs)} paires → <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives</span>
+          <span id="cprob-${i}" style="color:var(--text-dim)">× ${(p*100).toFixed(1)}% = <span style="color:${c}">${fmt(step.babies)}</span></span>
+        </div>
+      </div>
+      <div class="cascade-right">
+        <div class="cascade-att" id="catt-${i}">${fmt(step.attempts)}</div>
+        <div class="cascade-att-lbl">tentatives</div>
+      </div>
+    </div>`;
+
+    if(!isFinal){
+      cascHtml+=`<div class="cascade-arrow">→ ${fmt(step.babies)} ${cap(step.name)} alimentent l'étape suivante</div>`;
+    }
+  });
+
+  cascHtml+='</div>';
+
+  // Final result box
+  const fc=colOut(R.finalBabies);
+  const isDead=R.finalBabies<0.1;
+  if(isDead){
+    cascHtml+=`<div class="dead-warning" style="margin-top:14px">⚠ Moins de 0.1 bébé attendu au bout de la chaîne — augmentez le multiplicateur.</div>`;
+  }
+  cascHtml+=`<div class="final-result" style="margin-top:14px">
+    <div class="final-result-label">
+      Bébés <strong>${cap(name)}</strong> attendus<br>
+      <span style="font-size:11px">${R.finalBabies>=1?'Vous en aurez probablement plusieurs !'
+        :R.finalBabies>=0.5?'Environ 1 chance sur 2 d\'en avoir au moins 1'
+        :'Risque élevé de ne pas en obtenir — augmentez le multiplicateur'}</span>
+    </div>
+    <div class="final-result-val" id="final-babies" style="color:${fc}">${fmt(R.finalBabies)}</div>
+  </div>`;
+
+  cascHtml+=`<div class="info-note">
+    <strong style="color:var(--gold)">Bébés attendus</strong> = tentatives × p à cette étape. Ces bébés deviennent les parents de l'étape suivante — c'est l'effet boule de neige.<br>
+    Si la valeur <span style="color:#f87171">tombe sous 1</span>, la chaîne s'éteint : pas assez de parents pour l'étape d'après. Les parents <span style="color:#f59e0b">en orange</span> sont des captures Gen 1 directes.
+  </div>`;
+
+  c3.innerHTML=cascHtml;
+  main.appendChild(c3);
+}
+
+recalc();
+</script>
+
+  <!-- ══ EXPLANATION SECTION ══ -->
+  <section style="position:relative;z-index:1;background:var(--bg);border-top:1px solid var(--border);padding:40px 32px;">
+    <div class="explain">
+
+      <!-- Hero -->
+      <div class="explain-hero">
+        <div style="font-size:12px;color:var(--gold-dim);letter-spacing:6px;text-transform:uppercase;margin-bottom:12px;">✦ Documentation ✦</div>
+        <h2>Comment fonctionnent les calculs ?</h2>
+        <p>Ce calculateur simule la production de Muldos en cascade, en tenant compte de la probabilité à chaque accouplement, du ratio mâle/femelle, du clonage, et de la distribution équitable des parents entre les étapes.</p>
+      </div>
+
+      <!-- 4 concept cards -->
+      <div class="explain-grid">
+
+        <div class="ecard">
+          <div class="ecard-icon">🎲</div>
+          <div class="ecard-title">Probabilité par accouplement</div>
+          <p>À chaque accouplement, le bébé a une certaine probabilité d'être du bon type. Cette probabilité dépend de plusieurs facteurs cumulables :</p>
+          <div class="formula-block">
+            <div class="f-line"><span class="f-label">Base :</span><span class="f-eq">=</span><span class="f-val">30%</span></div>
+            <div class="f-line"><span class="f-label">Niveau parents :</span><span class="f-eq">+</span><span class="f-val">niv × 2 × 0.15%</span></div>
+            <div class="f-line"><span class="f-label">Optimakina :</span><span class="f-eq">+</span><span class="f-val">10%</span></div>
+            <div class="f-line"><span class="f-label">Reproducteur :</span><span class="f-eq">+</span><span class="f-val">~5%</span></div>
+            <div class="f-line" style="border-top:1px solid var(--border);margin-top:4px;padding-top:4px"><span class="f-label">Maximum :</span><span class="f-eq">=</span><span class="f-val">100%</span><span class="f-note">(niv.200 + Optimakina)</span></div>
+          </div>
+          <p>Exemple : parents niveau 100 + Optimakina → <strong style="color:var(--gold)">30 + 30 + 10 = 70%</strong> par accouplement.</p>
+        </div>
+
+        <div class="ecard">
+          <div class="ecard-icon">⚗</div>
+          <div class="ecard-title">Bébés attendus par étape</div>
+          <p>Le nombre de bébés produits à une étape est une <strong>espérance mathématique</strong> :</p>
+          <div class="formula-block">
+            <div class="f-line"><span class="f-label">Tentatives :</span><span class="f-eq">=</span><span class="f-val">paires dispo × cloneMult</span></div>
+            <div class="f-line"><span class="f-label">Bébés attendus :</span><span class="f-eq">=</span><span class="f-val">tentatives × p</span></div>
+            <div class="f-line"><span class="f-label">Clone (+30%) :</span><span class="f-eq">→</span><span class="f-val">cloneMult = 1.3</span></div>
+          </div>
+          <p>Ces bébés sont <strong>les parents de l'étape suivante</strong>. Si la valeur tombe sous 1, la chaîne s'éteint.</p>
+        </div>
+
+        <div class="ecard">
+          <div class="ecard-icon">⚖️</div>
+          <div class="ecard-title">Distribution équitable des parents</div>
+          <p>Un intermédiaire (ex : Roux) peut être nécessaire à <strong>plusieurs étapes</strong> (Turquoise ET Ivoire). Sa production est répartie équitablement :</p>
+          <div class="formula-block">
+            <div class="f-line"><span class="f-label">Part par étape :</span><span class="f-eq">=</span><span class="f-val">production ÷ usages</span></div>
+            <div class="f-line"><span class="f-label">Paires dispo :</span><span class="f-eq">=</span><span class="f-val">min(partA, partB)</span></div>
+          </div>
+          <p>Sans cette distribution, la première étape consommerait tout et les suivantes n'auraient plus rien.</p>
+        </div>
+
+        <div class="ecard">
+          <div class="ecard-icon">♂♀</div>
+          <div class="ecard-title">Ratio mâle / femelle</div>
+          <p>Chaque bébé né a <strong>50% de chance</strong> d'être mâle ou femelle. Pour former une paire reproductrice, il faut 1 mâle + 1 femelle.</p>
+          <div class="formula-block">
+            <div class="f-line"><span class="f-label">Captures Gen 1 :</span><span class="f-eq">=</span><span class="f-val">paires × 2</span><span class="f-note">(1♂ + 1♀)</span></div>
+            <div class="f-line"><span class="f-label">Impact sur paires :</span><span class="f-eq">=</span><span class="f-val">aucun</span><span class="f-note">*</span></div>
+          </div>
+          <p style="font-size:11px;color:var(--text-dim);font-style:italic">* Croiser A×B permet A♂+B♀ et A♀+B♂, donc les deux sexes s'utilisent — le nombre de paires reste min(stockA, stockB).</p>
+        </div>
+
+      </div>
+
+      <!-- Snowball flow -->
+      <div class="live-demo" style="margin-bottom:20px">
+        <div class="demo-title">✦ L'effet boule de neige — schéma de principe</div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;line-height:1.7">
+          Voici comment la production se propage de génération en génération. Chaque étape reçoit les bébés de l'étape précédente comme parents :
+        </p>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-text"><strong>Stock Gen 1 capturé</strong> × multiplicateur → N paires de chaque type</div>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(pairesA, pairesB) × cloneMult tentatives × p% = <span style="color:var(--gold)">X bébés Roux</span></div>
+          </div>
+          <div class="flow-arrow">↓ ces X Roux deviennent parents</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-text"><strong>Si Roux sert à 2 étapes</strong> (Ivoire + Turquoise) → X÷2 bébés chacun. La production se divise.</div>
+          </div>
+          <div class="flow-arrow">↓</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-text"><strong>Étape finale</strong> : le nombre de bébés cible dépend de toute la cascade. Sous 1 = risque de ne rien obtenir.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live mini calculator -->
+      <div class="live-demo">
+        <div class="demo-title">✦ Calculette interactive — une étape isolée</div>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;line-height:1.7">
+          Simulez une seule étape pour comprendre l'impact de chaque paramètre :
+        </p>
+        <div class="demo-controls">
+          <div class="demo-ctrl">
+            <label>Paires dispo</label>
+            <input type="number" id="d-pairs" min="1" value="10" oninput="demoCalc()">
+          </div>
+          <div class="demo-ctrl">
+            <label>Prob / acc.</label>
+            <input type="number" id="d-prob" min="1" max="100" value="30" oninput="demoCalc()">
+            <span style="font-size:10px;color:var(--text-dim)">%</span>
+          </div>
+          <div class="demo-ctrl">
+            <label>Clonage</label>
+            <select id="d-clone" onchange="demoCalc()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:14px;padding:7px 24px 7px 8px;border-radius:2px;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a5e14' stroke-width='1.5' fill='none'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center;">
+              <option value="1.3">Activé (×1.3)</option>
+              <option value="1.0">Désactivé</option>
+            </select>
+          </div>
+          <div class="demo-ctrl">
+            <label>Usages du parent</label>
+            <input type="number" id="d-uses" min="1" value="1" oninput="demoCalc()">
+            <span style="font-size:10px;color:var(--text-dim)">étapes partagent ce parent</span>
+          </div>
+        </div>
+
+        <div class="chain-viz" id="chain-viz">
+          <!-- filled by demoCalc() -->
+        </div>
+
+        <div class="demo-result">
+          <div class="demo-rbox"><div class="drv" id="d-out-att">—</div><div class="drl">Tentatives effectives</div></div>
+          <div class="demo-rbox"><div class="drv" id="d-out-share">—</div><div class="drl">Part du parent partagé</div></div>
+          <div class="demo-rbox"><div class="drv" id="d-out-pairs">—</div><div class="drl">Paires réelles</div></div>
+          <div class="demo-rbox" style="border-color:var(--gold-dim);background:rgba(201,162,39,.05)">
+            <div class="drv" id="d-out-babies" style="color:var(--gold)">—</div>
+            <div class="drl">Bébés attendus</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="ecard" style="margin-bottom:0">
+        <div class="ecard-title">✦ Questions fréquentes</div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+          <div>
+            <div style="font-size:14px;color:var(--text);margin-bottom:3px">Pourquoi mes résultats tombent à 0 même avec un grand multiplicateur ?</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Si un intermédiaire est partagé entre plusieurs étapes, sa production se divise. Avec trop d'étapes en chaîne, l'effet d'atténuation peut surpasser l'apport du multiplicateur. Vérifiez quelle étape est le "goulot d'étranglement" dans le tableau cascade.</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:12px">
+            <div style="font-size:14px;color:var(--text);margin-bottom:3px">Le multiplicateur s'applique à quoi exactement ?</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Au stock minimum de Gen 1 calculé automatiquement. Le minimum = 1 paire de chaque Gen 1 pour chaque usage dans la chaîne. ×5 = 5 fois plus de captures Gen 1, donc 5× plus de tentatives à la première génération.</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:12px">
+            <div style="font-size:14px;color:var(--text);margin-bottom:3px">Pourquoi le nombre de captures Gen 1 est-il le double des paires ?</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Pour former 1 paire reproductrice (1♂ + 1♀), il faut capturer en moyenne 2 animaux dans la nature, car le sexe est aléatoire à 50/50. Le calculateur affiche donc le nombre d'animaux à capturer, pas le nombre de paires.</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:12px">
+            <div style="font-size:14px;color:var(--text);margin-bottom:3px">Les bébés attendus sont-ils garantis ?</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Non — c'est une <strong style="color:var(--text)">espérance mathématique</strong>. Avec 3.9 bébés attendus, vous pouvez en avoir 0, 2, ou 7. La valeur représente la moyenne sur de nombreuses répétitions. Plus le nombre est élevé, plus vous avez de chances d'en obtenir au moins 1.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="site-footer-credit">
+      <span>Réalisé par</span>
+      <a href="https://www.youtube.com/@Chikkinsama" target="_blank" rel="noopener">✦ Chikkin Sama</a>
+      <div class="site-footer-sub">
+        <a href="https://www.youtube.com/@Chikkinsama" target="_blank" rel="noopener">🎬 Abonnez-vous pour soutenir !</a>
+      </div>
+    </div>
+    <div class="site-footer-right">
+      <div class="site-footer-update">Dernière mise à jour</div>
+      <div class="site-footer-update"><span>4 mars 2026</span></div>
+    </div>
+  </footer>
+
+
+<script>
+function demoCalc(){
+  const pairs = parseFloat(document.getElementById('d-pairs').value)||1;
+  const prob  = parseFloat(document.getElementById('d-prob').value)||30;
+  const clone = parseFloat(document.getElementById('d-clone').value)||1.3;
+  const uses  = parseFloat(document.getElementById('d-uses').value)||1;
+  const p = Math.min(1, prob/100);
+  const share = pairs / uses;
+  const realPairs = share;
+  const attempts = realPairs * clone;
+  const babies = attempts * p;
+  const fmt2 = v => v>=100?Math.round(v).toString():v>=10?v.toFixed(1):v.toFixed(2);
+  const col2 = v => v>=10?'#34d399':v>=3?'var(--gold)':v>=1?'#f59e0b':'#f87171';
+  document.getElementById('d-out-att').textContent = fmt2(attempts);
+  document.getElementById('d-out-share').textContent = fmt2(share);
+  document.getElementById('d-out-pairs').textContent = fmt2(realPairs);
+  const bEl = document.getElementById('d-out-babies');
+  bEl.textContent = fmt2(babies);
+  bEl.style.color = col2(babies);
+  // Chain viz
+  const viz = document.getElementById('chain-viz');
+  viz.innerHTML = `
+    <div class="chain-node"><div class="cn-val">${fmt2(pairs)}</div><div class="cn-lbl">paires brutes</div></div>
+    <div class="chain-arr">→</div><div class="chain-op" style="font-size:10px;color:var(--text-dim)">÷${uses} usages</div><div class="chain-arr">→</div>
+    <div class="chain-node"><div class="cn-val">${fmt2(share)}</div><div class="cn-lbl">part dispo</div></div>
+    <div class="chain-arr">→</div><div class="chain-op" style="font-size:10px;color:var(--text-dim)">×${clone} clone</div><div class="chain-arr">→</div>
+    <div class="chain-node"><div class="cn-val">${fmt2(attempts)}</div><div class="cn-lbl">tentatives</div></div>
+    <div class="chain-arr">→</div><div class="chain-op" style="font-size:10px;color:var(--text-dim)">×${(p*100).toFixed(0)}%</div><div class="chain-arr">→</div>
+    <div class="chain-node"><div class="cn-val" style="color:${col2(babies)}">${fmt2(babies)}</div><div class="cn-lbl">bébés</div></div>
+  `;
+}
+demoCalc();
+</script>
+</body>
+</html>
