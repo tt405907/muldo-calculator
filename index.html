@@ -287,7 +287,7 @@
         <div class="output-badge-val" id="badge-out" style="color:var(--text-dim)">—</div>
       </div>
       <div class="output-badge-row" style="margin-top:4px">
-        <span>Total animaux Gen 1 (♂+♀)</span>
+        <span>Total Muldos Gen 1 (♂+♀)</span>
         <div class="output-badge-val" style="font-size:16px;color:var(--gold)" id="badge-total">—</div>
       </div>
     </div>
@@ -435,6 +435,18 @@ function buildSteps(target){
   walk(target);return steps;
 }
 
+// Count how many times each name appears in the full tree (with duplicates)
+function countInstances(target){
+  const counts={};
+  function walk(n){
+    if(GEN1.includes(n))return;
+    const d=MULDOS[n];if(!d)return;
+    counts[n]=(counts[n]||0)+1;
+    walk(d.p[0]);walk(d.p[1]);
+  }
+  walk(target);return counts;
+}
+
 function buildTreeMap(target){
   const map=new Map(),vis=new Set();
   function walk(n){
@@ -496,6 +508,8 @@ function compute(target, p, mult, useClone, useRepro){
   const finalBabies=enriched.length>0?enriched[enriched.length-1].babies:0;
   const minGen1={};GEN1.forEach(n=>minGen1[n]=totalCost[n]||0);
 
+  const instances=countInstances(target);
+  enriched.forEach(s=>s.instances=instances[s.name]||1);
   return{enriched,gen1Needs,minGen1,totalGen1,finalBabies,treeMap:buildTreeMap(target)};
 }
 
@@ -643,7 +657,7 @@ function renderFull(name,R,p){
     </div>`;
   });
   sg+='</div>';
-  sg+=`<div class="stock-footer"><span>Total</span><strong id="total-val">${R.totalGen1}</strong> animaux Gen 1 à capturer (ratio ♂♀)</div>`;
+  sg+=`<div class="stock-footer"><span>Total</span><strong id="total-val">${R.totalGen1}</strong> Muldos Gen 1 à capturer (ratio ♂♀)</div>`;
   c1.innerHTML=`<div class="card-title">✦ Stock Gen 1 à capturer</div>${sg}`;
   main.appendChild(c1);
 
@@ -668,6 +682,7 @@ function renderFull(name,R,p){
       <div class="cascade-left">
         <span class="gb ${gc(step.gen)}" style="margin-bottom:4px">GEN ${step.gen}</span>
         <div class="cascade-name" style="color:${c}">${cap(step.name)}</div>
+        ${step.instances>1?`<div style="font-size:10px;color:var(--gold-dim);margin-top:2px;letter-spacing:1px;text-align:center;">× ${step.instances} groupes indépendants</div>`:''}
         <div style="font-size:10px;color:var(--text-dim);margin-top:3px">${parentDesc}</div>
       </div>
       <div class="cascade-center">
@@ -803,7 +818,7 @@ recalc();
           <div class="flow-arrow">↓</div>
           <div class="flow-step">
             <div class="flow-step-num">2</div>
-            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(pairesA, pairesB) × cloneMult tentatives × p% = <span style="color:var(--gold)">X bébés Roux</span></div>
+            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(supply(A), supply(B)) × cloneMult × p% = <span style="color:var(--gold)">X bébés</span>. Si Roux apparaît plusieurs fois dans l'arbre, les tentatives affichées sont le <strong>total combiné de toutes ses instances</strong>.</div>
           </div>
           <div class="flow-arrow">↓ ces X Roux deviennent parents</div>
           <div class="flow-step">
@@ -875,11 +890,11 @@ recalc();
           </div>
           <div style="border-top:1px solid var(--border);padding-top:12px">
             <div style="font-size:14px;color:var(--text);margin-bottom:3px">Le multiplicateur s'applique à quoi exactement ?</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Au stock minimum de Gen 1 calculé automatiquement. Le minimum = 1 paire de chaque Gen 1 pour chaque usage dans la chaîne. ×5 = 5 fois plus de captures Gen 1, donc 5× plus de tentatives à la première génération.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Au coût récursif en Gen 1 calculé automatiquement. Ce coût = somme de tous les Gen 1 nécessaires dans toutes les branches indépendantes. ×5 = 5 fois plus de captures Gen 1 et donc 5× plus de tentatives à chaque étape de la cascade.</div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:12px">
             <div style="font-size:14px;color:var(--text);margin-bottom:3px">Pourquoi le nombre de captures Gen 1 est-il le double des paires ?</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Pour former 1 paire reproductrice (1♂ + 1♀), il faut capturer en moyenne 2 animaux dans la nature, car le sexe est aléatoire à 50/50. Le calculateur affiche donc le nombre d'animaux à capturer, pas le nombre de paires.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Pour former 1 paire reproductrice (1♂ + 1♀), il faut capturer en moyenne 2 Muldos dans la nature, car le sexe est aléatoire à 50/50. Le calculateur affiche donc le nombre d'Muldos à capturer, pas le nombre de paires.</div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:12px">
             <div style="font-size:14px;color:var(--text);margin-bottom:3px">Les bébés attendus sont-ils garantis ?</div>
