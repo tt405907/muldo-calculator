@@ -234,7 +234,7 @@
     <h1>Muldo Breeding Calculator</h1>
     <p>Effet boule de neige en cascade</p>
     <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;">
-      Mis à jour le 4 mars 2026
+      Mis à jour le 16 mars 2026
     </div>
   </div>
 
@@ -810,7 +810,7 @@ recalc();
       <div class="explain-hero">
         <div style="font-size:12px;color:var(--gold-dim);letter-spacing:6px;text-transform:uppercase;margin-bottom:12px;">✦ Documentation ✦</div>
         <h2>Comment fonctionnent les calculs ?</h2>
-        <p>Ce calculateur simule la production de Muldos en cascade, en tenant compte de la probabilité à chaque accouplement, du ratio mâle/femelle, du clonage, et du fait que chaque parent devient stérile après usage — les branches sont indépendantes.</p>
+        <p>Ce calculateur simule la production de Muldos en cascade, en tenant compte de la probabilité à chaque accouplement, du ratio mâle/femelle, du clonage, et du fait que chaque parent devient stérile après usage. Les Gen 1 (Orchidée, Ébène, Indigo, Pourpre, Doré) sont les seuls Muldos capturables directement — tout le reste se produit par breeding.</p>
       </div>
 
       <!-- 4 concept cards -->
@@ -851,7 +851,7 @@ recalc();
             <div class="f-line"><span class="f-label">supply(X) :</span><span class="f-eq">=</span><span class="f-val">min(supply(A), supply(B)) × clone × p × repro</span></div>
             <div class="f-line"><span class="f-label">gen1Cost(X) :</span><span class="f-eq">=</span><span class="f-val">gen1Cost(A) + gen1Cost(B)</span><span class="f-note">(récursif)</span></div>
           </div>
-          <p>Ex : Roux apparaît <strong>3 fois</strong> dans l'arbre de Corail×Émeraude — chaque instance a son propre stock de Gen 1.</p>
+          <p>Ex : Roux (Gen 3) apparaît plusieurs fois dans un arbre profond — chaque instance a ses propres Gen 2 parents (doré et pourpre + doré et orchidée), qui eux-mêmes requièrent des Gen 1.</p>
         </div>
 
         <div class="ecard">
@@ -876,7 +876,7 @@ recalc();
         <div class="flow">
           <div class="flow-step">
             <div class="flow-step-num">1</div>
-            <div class="flow-step-text"><strong>Stock Gen 1 capturé</strong> × multiplicateur → N paires de chaque type</div>
+            <div class="flow-step-text"><strong>Stock Gen 1 capturé</strong> (Orchidée, Ébène, Indigo, Pourpre, Doré — les 5 Muldos de base capturables) × multiplicateur → N paires de chaque type</div>
           </div>
           <div class="flow-arrow">↓</div>
           <div class="flow-step">
@@ -886,7 +886,7 @@ recalc();
           <div class="flow-arrow">↓ ces X Roux deviennent parents</div>
           <div class="flow-step">
             <div class="flow-step-num">3</div>
-            <div class="flow-step-text"><strong>Si Roux sert à 2 étapes</strong> (Ivoire + Turquoise) → chaque étape a son propre groupe de Roux produit indépendamment, avec ses propres Gen 1 dédiés.</div>
+            <div class="flow-step-text"><strong>Si Roux sert à 2 étapes</strong> → chaque étape a son propre groupe de Roux produit indépendamment. Roux lui-même requiert des Gen 2 (doré et pourpre + doré et orchidée), qui à leur tour requièrent des Gen 1.</div>
           </div>
           <div class="flow-arrow">↓</div>
           <div class="flow-step">
@@ -957,7 +957,7 @@ recalc();
           </div>
           <div style="border-top:1px solid var(--border);padding-top:12px">
             <div style="font-size:14px;color:var(--text);margin-bottom:3px">Pourquoi le nombre de captures Gen 1 est-il le double des paires ?</div>
-            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Pour former 1 paire reproductrice (1♂ + 1♀), il faut capturer en moyenne 2 Muldos dans la nature, car le sexe est aléatoire à 50/50. Le calculateur affiche donc le nombre d'Muldos à capturer, pas le nombre de paires.</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7">Pour former 1 paire reproductrice (1♂ + 1♀), il faut capturer en moyenne 2 Muldos dans la nature, car le sexe est aléatoire à 50/50. Le calculateur affiche donc le nombre de Muldos à capturer, pas le nombre de paires.</div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:12px">
             <div style="font-size:14px;color:var(--text);margin-bottom:3px">Les bébés attendus sont-ils garantis ?</div>
@@ -980,7 +980,7 @@ recalc();
     </div>
     <div class="site-footer-right">
       <div class="site-footer-update">Dernière mise à jour</div>
-      <div class="site-footer-update"><span>4 mars 2026</span></div>
+      <div class="site-footer-update"><span>16 mars 2026</span></div>
     </div>
   </footer>
 
