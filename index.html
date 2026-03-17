@@ -258,7 +258,7 @@
     <h1>Muldo Breeding Calculator</h1>
     <p>Effet boule de neige en cascade</p>
     <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;">
-      Mis à jour le 16 mars 2026
+      Mis à jour le 17 mars 2026
     </div>
     <br>
     <a href="https://discord.gg/svv6MAaW" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;font-size:10px;color:var(--text-dim);text-decoration:none;letter-spacing:1px;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">💬 Discord</a>
@@ -338,7 +338,7 @@
         <div class="sl-marks"><span>1</span><span>100</span><span>200</span></div>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><span>Clonage des stériles</span><small>+30% tentatives effectives</small></div>
+        <div class="toggle-info"><span>Clonage des stériles</span><small>×1.43 tentatives (cycles infinis)</small></div>
         <label class="switch"><input type="checkbox" id="sw-clone" checked onchange="recalc()"><span class="switch-track"></span></label>
       </div>
       <div class="toggle-row">
@@ -588,7 +588,7 @@ function supply(name,p,cloneMult,reproMult,mult,advParams){
   if(advParams&&advParams[d.gen]){
     const ag=advParams[d.gen];
     ep=calcP(ag.level,ag.opti);
-    ecm=ag.clone?1.3:1.0;
+    ecm=ag.clone?1/(1-0.3):1.0;
     erm=ag.repro?2.0:1.0;
   }
   const sa=supply(d.p[0],p,cloneMult,reproMult,mult,advParams);
@@ -598,7 +598,7 @@ function supply(name,p,cloneMult,reproMult,mult,advParams){
 
 function compute(target, p, mult, useClone, useRepro, advParams){
   const steps = buildSteps(target);
-  const cloneMult = useClone ? 1.3 : 1.0;
+  const cloneMult = useClone ? 1/(1-0.3) : 1.0; // série géométrique infinie
   const reproMult = useRepro ? 2.0 : 1.0;
 
   const totalCost = gen1Cost(target);
@@ -614,7 +614,7 @@ function compute(target, p, mult, useClone, useRepro, advParams){
     if(advParams&&advParams[step.gen]){
       const ag=advParams[step.gen];
       sp=calcP(ag.level,ag.opti);
-      scm=ag.clone?1.3:1.0;
+      scm=ag.clone?1/(1-0.3):1.0;
       srm=ag.repro?2.0:1.0;
     }
     const shareA=supply(pa,p,cloneMult,reproMult,mult,advParams);
@@ -1046,7 +1046,7 @@ recalc();
           <div class="formula-block">
             <div class="f-line"><span class="f-label">Tentatives :</span><span class="f-eq">=</span><span class="f-val">paires dispo × cloneMult</span></div>
             <div class="f-line"><span class="f-label">Bébés attendus :</span><span class="f-eq">=</span><span class="f-val">tentatives × p</span></div>
-            <div class="f-line"><span class="f-label">Clone (+30%) :</span><span class="f-eq">→</span><span class="f-val">cloneMult = 1.3</span></div>
+            <div class="f-line"><span class="f-label">Clonage :</span><span class="f-eq">→</span><span class="f-val">cloneMult = 1/(1−0.3) ≈ 1.43</span></div>
             <div class="f-line"><span class="f-label">Reproducteur :</span><span class="f-eq">→</span><span class="f-val">×2 bébés par succès</span></div>
           </div>
           <p>Ces bébés sont <strong>les parents de l'étape suivante</strong>. Si la valeur tombe sous 1, la chaîne s'éteint.</p>
@@ -1091,7 +1091,7 @@ recalc();
           <div class="flow-arrow">↓</div>
           <div class="flow-step">
             <div class="flow-step-num">2</div>
-            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(supply(A), supply(B)) × cloneMult × p% = <span style="color:var(--gold)">X bébés</span>. Si Roux apparaît plusieurs fois dans l'arbre, les tentatives affichées sont le <strong>total combiné de toutes ses instances</strong>.</div>
+            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(supply(A), supply(B)) × 1.43 × p% = <span style="color:var(--gold)">X bébés</span>. Si Roux apparaît plusieurs fois dans l'arbre, les tentatives affichées sont le <strong>total combiné de toutes ses instances</strong>.</div>
           </div>
           <div class="flow-arrow">↓ ces X Roux deviennent parents</div>
           <div class="flow-step">
@@ -1125,7 +1125,7 @@ recalc();
           <div class="demo-ctrl">
             <label>Clonage</label>
             <select id="d-clone" onchange="demoCalc()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:14px;padding:7px 24px 7px 8px;border-radius:2px;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a5e14' stroke-width='1.5' fill='none'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center;">
-              <option value="1.3">Activé (×1.3)</option>
+              <option value="1.4286">Activé (×1.43)</option>
               <option value="1.0">Désactivé</option>
             </select>
           </div>
@@ -1193,7 +1193,7 @@ recalc();
     </div>
     <div class="site-footer-right">
       <div class="site-footer-update">Dernière mise à jour</div>
-      <div class="site-footer-update"><span>16 mars 2026</span></div>
+      <div class="site-footer-update"><span>17 mars 2026</span></div>
     </div>
   </footer>
 
