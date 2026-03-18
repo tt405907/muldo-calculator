@@ -221,6 +221,28 @@
 
 
 
+
+  .time-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .time-box{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:12px 14px;}
+  .time-box-title{font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+  .time-box-val{font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);line-height:1;}
+  .time-box-sub{font-size:10px;color:var(--text-dim);margin-top:3px;}
+  .time-phases{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+  .time-phase{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;font-size:12px;}
+  .time-phase-lbl{color:var(--text-dim);}
+  .time-phase-val{color:var(--gold);font-family:'Cinzel Decorative',serif;font-size:13px;}
+  .fuel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+  .fuel-box{background:var(--surface2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;text-align:center;}
+  .fuel-box-name{font-size:10px;color:var(--text-dim);margin-bottom:4px;}
+  .fuel-box-val{font-family:'Cinzel Decorative',serif;font-size:16px;color:var(--gold);}
+  .fuel-box-tier{font-size:9px;color:var(--gold-dim);margin-top:2px;}
+  .level-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+  .level-table th{text-align:left;padding:5px 8px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+  .level-table td{padding:5px 8px;border-bottom:1px solid rgba(58,46,30,.2);color:var(--text-dim);}
+  .level-table tr.optimal td{color:var(--gold);background:rgba(201,162,39,.06);}
+  .level-table tr.current-level td{color:var(--text);background:rgba(139,92,246,.08);}  .level-table tr.current-level td:first-child{color:var(--gold-dim);}
+  .level-table td:first-child{color:var(--text);}
+
   .mode-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:10px;}
   .mode-btn{flex:1;padding:6px 4px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s;font-family:'Crimson Pro',serif;}
   .mode-btn.active{background:var(--gold-dim);color:#000;font-weight:bold;}
@@ -258,7 +280,7 @@
     <h1>Muldo Breeding Calculator</h1>
     <p>Effet boule de neige en cascade</p>
     <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;">
-      Mis à jour le 17 mars 2026
+      Mis à jour le 18 mars 2026
     </div>
     <br>
     <a href="https://discord.gg/svv6MAaW" target="_blank" rel="noopener" style="display:inline-block;margin-top:6px;font-size:10px;color:var(--text-dim);text-decoration:none;letter-spacing:1px;opacity:0.7;transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">💬 Discord</a>
@@ -338,7 +360,7 @@
         <div class="sl-marks"><span>1</span><span>100</span><span>200</span></div>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><span>Clonage des stériles</span><small>×1.43 tentatives (cycles infinis)</small></div>
+        <div class="toggle-info"><span>Clonage des stériles</span><small>×1.5→×2 selon paires dispo</small></div>
         <label class="switch"><input type="checkbox" id="sw-clone" checked onchange="recalc()"><span class="switch-track"></span></label>
       </div>
       <div class="toggle-row">
@@ -361,6 +383,26 @@
       <strong id="p-per-acc">30.2%</strong>
     </div>
 
+  </div>
+
+  <!-- Temps -->
+  <div class="sec" style="display:none">
+    <div class="sec-title">Élevage &amp; Temps</div>
+    <div class="sl-row">
+      <div class="sl-hdr"><span>Nombre d'enclos</span><strong id="lbl-enclos">3</strong></div>
+      <input type="range" id="sl-enclos" min="1" max="6" value="3"
+        oninput="document.getElementById('lbl-enclos').textContent=this.value;recalc()">
+      <div class="sl-marks"><span>1</span><span>3</span><span>6</span></div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><span>Tier carburant</span><small id="tier-label">Tier 4 — Élixir</small></div>
+      <div style="display:flex;gap:4px">
+        <button id="tier-btn-1" class="adv-icon-btn" onclick="setTier(1)" style="width:28px;height:24px;font-size:11px;">1</button>
+        <button id="tier-btn-2" class="adv-icon-btn" onclick="setTier(2)" style="width:28px;height:24px;font-size:11px;">2</button>
+        <button id="tier-btn-3" class="adv-icon-btn" onclick="setTier(3)" style="width:28px;height:24px;font-size:11px;">3</button>
+        <button id="tier-btn-4" class="adv-icon-btn active" onclick="setTier(4)" style="width:28px;height:24px;font-size:11px;">4</button>
+      </div>
+    </div>
   </div>
 </aside>
 
@@ -580,25 +622,34 @@ function gen1Cost(name){
   return r;
 }
 
-function supply(name,p,cloneMult,reproMult,mult,advParams){
+function supply(name,p,useClone,reproMult,mult,advParams){
   if(GEN1.includes(name)){return(gen1Cost(name)[name]||0)*mult;}
   const d=MULDOS[name];if(!d)return 0;
   // Use per-gen params if available
-  let ep=p,ecm=cloneMult,erm=reproMult;
+  let ep=p,useCloneLocal=useClone,erm=reproMult;
   if(advParams&&advParams[d.gen]){
     const ag=advParams[d.gen];
     ep=calcP(ag.level,ag.opti);
-    ecm=ag.clone?1/(1-0.3):1.0;
+    useCloneLocal=ag.clone;
     erm=ag.repro?2.0:1.0;
   }
-  const sa=supply(d.p[0],p,cloneMult,reproMult,mult,advParams);
-  const sb=supply(d.p[1],p,cloneMult,reproMult,mult,advParams);
-  return Math.min(sa,sb)*ecm*ep*erm;
+  const sa=supply(d.p[0],p,useClone,reproMult,mult,advParams);
+  const sb=supply(d.p[1],p,useClone,reproMult,mult,advParams);
+  const pairs=Math.min(sa,sb);
+  const ecm=dynClone(pairs, useCloneLocal);
+  return pairs*ecm*ep*erm;
+}
+
+// Dynamic clone multiplier: converges to ×2 as pairs increase
+// With few pairs: closer to ×1.5; with many: approaches ×2
+function dynClone(pairs, useClone){
+  if(!useClone) return 1.0;
+  return 2 - 1/(Math.max(pairs,0.01) + 1);
 }
 
 function compute(target, p, mult, useClone, useRepro, advParams){
   const steps = buildSteps(target);
-  const cloneMult = useClone ? 1/(1-0.3) : 1.0; // série géométrique infinie
+  // cloneMult is now dynamic per step: dynClone(pairs, useClone)
   const reproMult = useRepro ? 2.0 : 1.0;
 
   const totalCost = gen1Cost(target);
@@ -606,20 +657,26 @@ function compute(target, p, mult, useClone, useRepro, advParams){
   GEN1.forEach(n=>gen1Needs[n]=(totalCost[n]||0)*mult*2); // ×2 sex ratio
   const totalGen1=Object.values(gen1Needs).reduce((a,b)=>a+b,0);
 
+  const instances=countInstances(target);
   let maxBabies=1;
   const enriched=steps.map((step,i)=>{
     const [pa,pb]=step.parents;
     // Per-gen override
-    let sp=p,scm=cloneMult,srm=reproMult;
+    let sp=p,scm=1.0,srm=reproMult; // scm computed dynamically below
     if(advParams&&advParams[step.gen]){
       const ag=advParams[step.gen];
       sp=calcP(ag.level,ag.opti);
-      scm=ag.clone?1/(1-0.3):1.0;
+      // scm computed dynamically via dynClone after pairs are known
       srm=ag.repro?2.0:1.0;
     }
-    const shareA=supply(pa,p,cloneMult,reproMult,mult,advParams);
-    const shareB=supply(pb,p,cloneMult,reproMult,mult,advParams);
+    const shareA=supply(pa,p,useClone,reproMult,mult,advParams);
+    const shareB=supply(pb,p,useClone,reproMult,mult,advParams);
     const pairs=Math.min(shareA,shareB);
+    // Dynamic cloneMult based on actual pairs available at this step
+    const useCloneStep = advParams&&advParams[step.gen] ? advParams[step.gen].clone : useClone;
+    // Use total pairs across all independent instances for dynClone
+    const totalPairsForClone = pairs * (instances[step.name]||1);
+    scm = dynClone(totalPairsForClone, useCloneStep);
     const attempts=pairs*scm;
     const babies=attempts*sp*srm;
     if(babies>maxBabies)maxBabies=babies;
@@ -630,7 +687,6 @@ function compute(target, p, mult, useClone, useRepro, advParams){
   const finalBabies=enriched.length>0?enriched[enriched.length-1].babies:0;
   const minGen1={};GEN1.forEach(n=>minGen1[n]=totalCost[n]||0);
 
-  const instances=countInstances(target);
   enriched.forEach(s=>s.instances=instances[s.name]||1);
   return{enriched,gen1Needs,minGen1,totalGen1,finalBabies,treeMap:buildTreeMap(target)};
 }
@@ -674,6 +730,97 @@ let lastTarget=null;
 let advParamsStore={}; // persists across renders
 
 
+const XP_TABLE=[19, 49, 96, 161, 246, 353, 481, 633, 809, 1011, 1238, 1491, 1772, 2081, 2419, 2786, 3182, 3609, 4067, 4557, 5078, 5632, 6219, 6839, 7493, 8182, 8905, 9664, 10457, 11287, 12154, 13057, 13997, 14974, 15990, 17043, 18135, 19266, 20437, 21646, 22896, 24186, 25516, 26887, 28299, 29753, 31248, 32785, 34365, 35987, 37652, 39360, 41111, 42906, 44745, 46628, 48555, 50527, 52544, 54607, 56714, 58868, 61067, 63312, 65604, 67942, 70327, 72760, 75239, 77766, 80341, 82964, 85635, 88355, 91123, 93940, 96806, 99721, 102685, 105700, 108764, 111878, 115042, 118257, 121523, 124840, 128207, 131626, 135096, 138618, 142191, 145817, 149495, 153225, 157008, 160843, 164732, 168673, 172668, 176716, 180818, 184974, 189183, 193447, 197765, 202137, 206565, 211046, 215583, 220176, 224823, 229526, 234284, 239099, 243969, 248895, 253878, 258917, 264013, 269165, 274375, 279641, 284965, 290346, 295784, 301280, 306834, 312446, 318116, 323845, 329631, 335477, 341381, 347343, 353365, 359446, 365587, 371786, 378045, 384364, 390743, 397182, 403681, 410240, 416859, 423539, 430280, 437082, 443944, 450868, 457852, 464898, 472006, 479175, 486406, 493699, 501054, 508470, 515950, 523491, 531095, 538762, 546491, 554283, 562139, 570057, 578039, 586084, 594193, 602365, 610601, 618901, 627265, 635693, 644185, 652742, 661363, 670049, 678799, 687615, 696495, 705440, 714451, 723527, 732668, 741875, 751148, 760486, 769890, 779361, 788897, 798500, 808169, 817904, 827706, 837575, 847510, 857513, 867582];
+
+const TIER_NAMES = {1:'Extrait',2:'Philtre',3:'Potion',4:'Élixir'};
+let currentTier = 4;
+
+function setTier(t){
+  currentTier = t;
+  for(let i=1;i<=4;i++){
+    const b=document.getElementById('tier-btn-'+i);
+    if(b) b.classList.toggle('active', i===t);
+  }
+  const labels={1:'Tier 1 — Extrait',2:'Tier 2 — Philtre',3:'Tier 3 — Potion',4:'Tier 4 — Élixir'};
+  const el=document.getElementById('tier-label');
+  if(el) el.textContent=labels[t];
+  recalc();
+}
+
+function xpToLevel(level){
+  if(level<=1)return 0;
+  return XP_TABLE[Math.min(level-2, XP_TABLE.length-1)];
+}
+
+function timeToLevel(level, tier){
+  if(level<=1)return 0;
+  const xp=xpToLevel(level);
+  const xpPerMin=tier*60;
+  return xp/xpPerMin;
+}
+
+function formatTime(minutes){
+  if(minutes<1)return '<1min';
+  const h=Math.floor(minutes/60);
+  const m=Math.round(minutes%60);
+  if(h===0)return m+'min';
+  if(m===0)return h+'h';
+  return h+'h '+m+'min';
+}
+
+function formatDays(minutes){
+  const days=Math.floor(minutes/1440);
+  const rem=minutes%1440;
+  const h=Math.floor(rem/60);
+  const m=Math.round(rem%60);
+  if(days>0)return days+'j '+h+'h'+(m>0?' '+m+'min':'');
+  return formatTime(minutes);
+}
+
+function computeTime(totalMuldos, tier, enclos, targetLevel){
+  // Phase 1: 2 jauges simultaneously = 333 min (fixed, tier1 range)
+  const jaugeTime = 333;
+  // Phase 2: baffeur/caresseur avg 2667pts + mangeoire to level, run simultaneously
+  const baffPtsPerMin = tier * 60;
+  const baffTime = 2667 / baffPtsPerMin;
+  const mangTime = timeToLevel(targetLevel, tier);
+  const phase2 = Math.max(baffTime, mangTime);
+  const timePerMuldo = jaugeTime + phase2;
+  // Parallel: enclos × 10 muldos per batch
+  const perBatch = enclos * 10;
+  const batches = Math.ceil(totalMuldos / perBatch);
+  const totalTime = batches * timePerMuldo;
+  // Fuel: each muldo uses 20000 pts for each of 2 jauges + 2667 for baffeur
+  // Fuel = pts / (pts per item) — depends on tier
+  // Each item of tier T fills TIER_POINTS[T] pts
+  const TIER_POINTS = {1:40000,2:30000,3:20000,4:10000};
+  // For 2 jauges of 20000 pts each: all in tier1 range
+  // Items needed: ceil(20000 / 40000) = 1 extrait per jauge... 
+  // Actually carburant fills the jauge — 1 extrait fills up to 40000
+  // So for 20000 pts: need ceil(20000/40000)=1 extrait per jauge per muldo
+  // For tier chosen, items fill up to their max:
+  const itemFill = {1:40000,2:70000,3:90000,4:100000};
+  // For jauges (0→20000): always 1 item of tier1 suffices (40000 cap > 20000)
+  // But user might want tier2+ to "cover" it — same 1 item
+  // For mangeoire: runs continuously, no "items" — it's continuous fuel
+  // Actually fuel IS consumed at rate tier*10/10s, and you need enough fuel
+  // For jauges: 20000 pts at tier1 rate = uses 20000 fuel (tier1)
+  // Or use tier2+ but still only in tier1 range = 20000 fuel consumed (tier2 rate but same total)
+  // Wait: tier2 consumes 20/10s but mount gains 20/10s too
+  // So for 20000 pts: tier1 uses 20000 fuel, tier2 uses 20000 fuel too (same pts)
+  // The SPEED differs but fuel consumed = pts gained = 20000
+  const jaugeFuel = 20000; // per jauge per muldo (regardless of tier since 0-20000 is tier1 range)
+  const baffFuel = 2667;   // avg baffeur fuel per muldo
+  const mangFuel = timeToLevel(targetLevel, tier) * tier * 60; // xp gained = fuel consumed
+  return {
+    timePerMuldo, jaugeTime, baffTime, mangTime, phase2,
+    totalTime, batches, perBatch,
+    jaugeFuelTotal: jaugeFuel * 2 * totalMuldos,
+    baffFuelTotal: baffFuel * totalMuldos,
+    mangFuelTotal: mangFuel * totalMuldos,
+  };
+}
+
 let currentMode = 'simple';
 
 function setMode(mode){
@@ -700,6 +847,119 @@ function setMode(mode){
     if(chev) chev.textContent = isAdv ? '▴ replier' : '▾ déplier';
   }
   recalc();
+}
+
+
+function renderTimeCard(name, R, main){
+  const enclos = parseInt(document.getElementById('sl-enclos').value)||3;
+  const tier = currentTier;
+  const {mult} = getParams();
+  const level = parseInt(document.getElementById('sl-level').value)||1;
+  // Total muldos to prepare:
+  // Gen1: only half need full prep (the other half just fills the ♂♀ pair)
+  // Intermediates: same logic — babies produced × 2 for pairs, but only half prep
+  const intermediateBabies = R.enriched.reduce((sum, step) => sum + step.babies, 0);
+  const totalMuldos = Math.ceil(R.totalGen1 / 2) + Math.ceil(intermediateBabies);
+
+  const T = computeTime(totalMuldos, tier, enclos, level);
+
+  const c4 = document.createElement('div'); c4.className='card fade'; c4.id='time-card';
+  
+  // Optimal level table data
+  let levelRows = '';
+  const fixedLevels = [1,25,50,75,100,125,150,175,200];
+  const checkLevels = fixedLevels.includes(level) ? fixedLevels : [...fixedLevels, level].sort((a,b)=>a-b);
+  let optimalLevel = 1, optimalScore = -Infinity;
+  // p_base = global p (sans niveau) pour isoler l'effet du niveau
+  const p_base = Math.min(1, 30/100 + (getParams().opti?0.1:0));
+  for(const lv of checkLevels){
+    const p_lv = Math.min(1,(30+lv*2*0.15+(getParams().opti?10:0))/100);
+    const T2 = computeTime(totalMuldos, tier, enclos, lv);
+    // Expected babies scales proportionally with p
+    const expectedBabies = R.finalBabies * (p_lv / Math.max(0.01, Math.min(1,(30+level*2*0.15+(getParams().opti?10:0))/100)));
+    // Score: expected babies per day
+    const score = expectedBabies / (T2.totalTime / 1440);
+    if(score > optimalScore){ optimalScore=score; optimalLevel=lv; }
+  }
+  for(const lv of checkLevels){
+    const p_lv = Math.min(1, (30+lv*2*0.15)/100);
+    const T2 = computeTime(totalMuldos, tier, enclos, lv);
+    const isOpt = lv===optimalLevel;
+    const isCurrent = lv===level;
+    let rowClass = '';
+    if(isOpt) rowClass='optimal';
+    else if(isCurrent) rowClass='current-level';
+    levelRows += `<tr class="${rowClass}">
+      <td>${lv===1?'1 (base)':lv}${isCurrent&&!isOpt?' ◄':''}</td>
+      <td>${(p_lv*100).toFixed(1)}%</td>
+      <td>${formatTime(T2.mangTime)}</td>
+      <td>${formatDays(T2.totalTime)}</td>
+    </tr>`;
+  }
+
+  c4.innerHTML=`
+    <div class="card-title">⏱ Estimation du temps de préparation</div>
+    <div style="font-size:11px;color:var(--text-dim);margin-bottom:14px;font-style:italic;">
+      Basé sur ${totalMuldos} Muldos à préparer (Gen 1 + intermédiaires) · ${enclos} enclos (${enclos*10} simultanés) · Tier ${tier} (${TIER_NAMES[tier]})
+    </div>
+
+    <div class="time-grid">
+      <div class="time-box">
+        <div class="time-box-title">Temps total estimé</div>
+        <div class="time-box-val">${formatDays(T.totalTime)}</div>
+        <div class="time-box-sub">${T.batches} lot${T.batches>1?'s':''} de ${T.perBatch} Muldos</div>
+      </div>
+      <div class="time-box">
+        <div class="time-box-title">Temps par Muldo</div>
+        <div class="time-box-val">${formatTime(T.timePerMuldo)}</div>
+        <div class="time-box-sub">Phase jauges + Baffeur/Mangeoire</div>
+      </div>
+    </div>
+
+    <div class="card-title" style="font-size:9px;margin-bottom:8px;">Détail des phases</div>
+    <div class="time-phases">
+      <div class="time-phase">
+        <span class="time-phase-lbl">⚡ Phase 1 — 2 jauges simultanées (Amour/Endurance + Maturité)</span>
+        <span class="time-phase-val">${formatTime(T.jaugeTime)}</span>
+      </div>
+      <div class="time-phase">
+        <span class="time-phase-lbl">🔄 Phase 2 — Baffeur/Caresseur (moy. 2667 pts) + Mangeoire</span>
+        <span class="time-phase-val">${formatTime(T.phase2)}</span>
+      </div>
+    </div>
+
+    <div class="card-title" style="font-size:9px;margin-bottom:8px;">Carburant nécessaire (total)</div>
+    <div class="fuel-grid">
+      <div class="fuel-box">
+        <div class="fuel-box-name">Jauges stat ×2</div>
+        <div class="fuel-box-val">${Math.ceil(T.jaugeFuelTotal/1000)}k</div>
+        <div class="fuel-box-tier">pts tier 1</div>
+      </div>
+      <div class="fuel-box">
+        <div class="fuel-box-name">Baffeur/Caresseur</div>
+        <div class="fuel-box-val">${Math.ceil(T.baffFuelTotal/1000)}k</div>
+        <div class="fuel-box-tier">pts tier 1</div>
+      </div>
+      <div class="fuel-box">
+        <div class="fuel-box-name">Mangeoire (XP)</div>
+        <div class="fuel-box-val">${Math.ceil(T.mangFuelTotal/1000)}k</div>
+        <div class="fuel-box-tier">pts tier ${tier}</div>
+      </div>
+      <div class="fuel-box" style="border-color:var(--gold-dim);background:rgba(201,162,39,.05)">
+        <div class="fuel-box-name">Niveau cible</div>
+        <div class="fuel-box-val" style="color:var(--gold)">${level}</div>
+        <div class="fuel-box-tier">p = ${(Math.min(1,(30+level*2*0.15)/100)*100).toFixed(1)}%</div>
+      </div>
+    </div>
+
+    <div class="card-title" style="font-size:9px;margin-bottom:4px;">Niveau optimal — temps vs probabilité</div>
+    <div style="font-size:10px;color:var(--text-dim);margin-bottom:8px;font-style:italic;">La ligne en or représente le meilleur compromis temps/probabilité pour votre configuration.</div>
+    <table class="level-table">
+      <thead><tr><th>Niveau</th><th>p</th><th>Temps mangeoire</th><th>Temps total</th></tr></thead>
+      <tbody>${levelRows}</tbody>
+    </table>
+  `;
+  main.appendChild(c4);
 }
 
 function toggleAdv(){
@@ -867,10 +1127,13 @@ function softUpdate(R,p){
     const attEl=document.getElementById('catt-'+i);
     if(attEl) attEl.textContent=fmt(step.attempts);
     const lEl=document.getElementById('cleft-'+i);
-    if(lEl) lEl.innerHTML=`${fmt(step.pairs)} paires → <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives`;
+    if(lEl) lEl.innerHTML=`${fmt(step.pairs)} paires × <span style="color:var(--gold-dim)">×${step.cloneUsed.toFixed(2)} clone</span> = <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives`;
     const pEl=document.getElementById('cprob-'+i);
     if(pEl) pEl.innerHTML=`× ${(step.pUsed*100).toFixed(1)}% = <span style="color:${col(step.babies)}">${fmt(step.babies)}</span>`;
   });
+
+  // Refresh time card (disabled)
+  // const tc=document.getElementById('time-card');
 
   // Update final result
   const fr=document.getElementById('final-babies');
@@ -967,7 +1230,7 @@ function renderFull(name,R,p){
           <div class="cascade-bar-inner" id="cbar-${i}" style="width:${step.barPct.toFixed(1)}%;background:${c}"></div>
         </div>
         <div class="cascade-bar-label">
-          <span id="cleft-${i}" style="color:var(--text-dim);font-size:10px">${fmt(step.pairs)} paires → <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives</span>
+          <span id="cleft-${i}" style="color:var(--text-dim);font-size:10px">${fmt(step.pairs)} paires × <span style="color:var(--gold-dim)">×${step.cloneUsed.toFixed(2)} clone</span> = <span style="color:var(--gold)">${fmt(step.attempts)}</span> tentatives</span>
           <span id="cprob-${i}" style="color:var(--text-dim)">× ${(step.pUsed*100).toFixed(1)}% = <span style="color:${c}">${fmt(step.babies)}</span></span>
         </div>
       </div>
@@ -1007,6 +1270,9 @@ function renderFull(name,R,p){
 
   c3.innerHTML=cascHtml;
   main.appendChild(c3);
+
+  // Card 4: Time estimation (disabled)
+  // renderTimeCard(name, R, main);
 }
 
 recalc();
@@ -1046,7 +1312,7 @@ recalc();
           <div class="formula-block">
             <div class="f-line"><span class="f-label">Tentatives :</span><span class="f-eq">=</span><span class="f-val">paires dispo × cloneMult</span></div>
             <div class="f-line"><span class="f-label">Bébés attendus :</span><span class="f-eq">=</span><span class="f-val">tentatives × p</span></div>
-            <div class="f-line"><span class="f-label">Clonage :</span><span class="f-eq">→</span><span class="f-val">cloneMult = 1/(1−0.3) ≈ 1.43</span></div>
+            <div class="f-line"><span class="f-label">Clonage :</span><span class="f-eq">→</span><span class="f-val">2 − 1/(paires+1)</span><span class="f-note">→ ×1.5 à ×2 selon paires</span></div>
             <div class="f-line"><span class="f-label">Reproducteur :</span><span class="f-eq">→</span><span class="f-val">×2 bébés par succès</span></div>
           </div>
           <p>Ces bébés sont <strong>les parents de l'étape suivante</strong>. Si la valeur tombe sous 1, la chaîne s'éteint.</p>
@@ -1091,7 +1357,7 @@ recalc();
           <div class="flow-arrow">↓</div>
           <div class="flow-step">
             <div class="flow-step-num">2</div>
-            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(supply(A), supply(B)) × 1.43 × p% = <span style="color:var(--gold)">X bébés</span>. Si Roux apparaît plusieurs fois dans l'arbre, les tentatives affichées sont le <strong>total combiné de toutes ses instances</strong>.</div>
+            <div class="flow-step-text"><strong>Étape intermédiaire (ex: Roux)</strong> : min(supply(A), supply(B)) × 2 × p% = <span style="color:var(--gold)">X bébés</span>. Si Roux apparaît plusieurs fois dans l'arbre, les tentatives affichées sont le <strong>total combiné de toutes ses instances</strong>.</div>
           </div>
           <div class="flow-arrow">↓ ces X Roux deviennent parents</div>
           <div class="flow-step">
@@ -1125,7 +1391,7 @@ recalc();
           <div class="demo-ctrl">
             <label>Clonage</label>
             <select id="d-clone" onchange="demoCalc()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:14px;padding:7px 24px 7px 8px;border-radius:2px;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a5e14' stroke-width='1.5' fill='none'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 6px center;">
-              <option value="1.4286">Activé (×1.43)</option>
+              <option value="2.0">Activé (×2)</option>
               <option value="1.0">Désactivé</option>
             </select>
           </div>
@@ -1193,7 +1459,7 @@ recalc();
     </div>
     <div class="site-footer-right">
       <div class="site-footer-update">Dernière mise à jour</div>
-      <div class="site-footer-update"><span>17 mars 2026</span></div>
+      <div class="site-footer-update"><span>18 mars 2026</span></div>
     </div>
   </footer>
 
