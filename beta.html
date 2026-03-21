@@ -243,6 +243,13 @@
   .level-table tr.current-level td{color:var(--text);background:rgba(139,92,246,.08);}  .level-table tr.current-level td:first-child{color:var(--gold-dim);}
   .level-table td:first-child{color:var(--text);}
 
+
+  .beta-banner{background:linear-gradient(90deg,rgba(234,91,39,.15),rgba(234,91,39,.05));border-bottom:2px solid #EA5B27;padding:10px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;}
+  .beta-badge{display:inline-flex;align-items:center;gap:8px;font-family:'Cinzel Decorative',serif;font-size:11px;color:#EA5B27;letter-spacing:2px;}
+  .beta-badge::before{content:'⚠';font-size:14px;}
+  .beta-back{font-size:11px;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:4px 10px;border-radius:2px;transition:border-color .2s,color .2s;}
+  .beta-back:hover{border-color:#EA5B27;color:#EA5B27;}
+
   .mode-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:10px;}
   .mode-btn{flex:1;padding:6px 4px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:none;background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s;font-family:'Crimson Pro',serif;}
   .mode-btn.active{background:var(--gold-dim);color:#000;font-weight:bold;}
@@ -278,6 +285,7 @@
   <div class="logo">
     <div class="logo-orn">✦ ✦ ✦</div>
     <h1>Muldo Breeding Calculator</h1>
+    <div style="font-size:9px;color:#EA5B27;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Version Bêta</div>
     <p>Effet boule de neige en cascade</p>
     <div style="margin-top:10px;display:inline-block;background:rgba(201,162,39,.08);border:1px solid var(--gold-dim);border-radius:2px;padding:3px 10px;font-size:9px;color:var(--gold-dim);letter-spacing:2px;text-transform:uppercase;">
       Mis à jour le 18 mars 2026
@@ -385,7 +393,25 @@
 
   </div>
 
-
+  <!-- Temps -->
+  <div class="sec">
+    <div class="sec-title">Élevage &amp; Temps</div>
+    <div class="sl-row">
+      <div class="sl-hdr"><span>Nombre d'enclos</span><strong id="lbl-enclos">3</strong></div>
+      <input type="range" id="sl-enclos" min="1" max="48" value="3"
+        oninput="document.getElementById('lbl-enclos').textContent=this.value;recalc()">
+      <div class="sl-marks"><span>1</span><span>24</span><span>48</span></div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><span>Tier carburant</span><small id="tier-label">Tier 4 — Élixir</small></div>
+      <div style="display:flex;gap:4px">
+        <button id="tier-btn-1" class="adv-icon-btn" onclick="setTier(1)" style="width:28px;height:24px;font-size:11px;">1</button>
+        <button id="tier-btn-2" class="adv-icon-btn" onclick="setTier(2)" style="width:28px;height:24px;font-size:11px;">2</button>
+        <button id="tier-btn-3" class="adv-icon-btn" onclick="setTier(3)" style="width:28px;height:24px;font-size:11px;">3</button>
+        <button id="tier-btn-4" class="adv-icon-btn active" onclick="setTier(4)" style="width:28px;height:24px;font-size:11px;">4</button>
+      </div>
+    </div>
+  </div>
 </aside>
 
 <!-- ══ MAIN ══ -->
@@ -1133,7 +1159,13 @@ function softUpdate(R,p){
     if(pEl) pEl.innerHTML=`× ${(step.pUsed*100).toFixed(1)}% = <span style="color:${col(step.babies)}">${fmt(step.babies)}</span>`;
   });
 
-  // Time card refresh disabled in stable version
+  // Refresh time card
+  const tc=document.getElementById('time-card');
+  if(tc && tc.parentNode){
+    const name=document.getElementById('sel-muldo').value;
+    tc.parentNode.removeChild(tc);
+    renderTimeCard(name, R, document.getElementById('main-area'));
+  }
 
   // Update final result
   const fr=document.getElementById('final-babies');
@@ -1271,7 +1303,8 @@ function renderFull(name,R,p){
   c3.innerHTML=cascHtml;
   main.appendChild(c3);
 
-  // Card 4: Time estimation (stable version — disabled)
+  // Card 4: Time estimation
+  renderTimeCard(name, R, main);
 }
 
 recalc();
@@ -1454,9 +1487,6 @@ recalc();
       </div>
       <div class="site-footer-sub" style="margin-top:4px">
         <a href="https://discord.gg/svv6MAaW" target="_blank" rel="noopener">💬 Rejoindre le Discord — signaler une erreur</a>
-      </div>
-      <div class="site-footer-sub" style="margin-top:4px">
-        <a href="beta.html" style="color:#EA5B27;border-color:#EA5B27;">⚗ Tester la version bêta</a>
       </div>
     </div>
     <div class="site-footer-right">
