@@ -9,8 +9,8 @@ import TreeCard from './components/TreeCard';
 import CascadeCard from './components/CascadeCard';
 import AdvancedParamsCard from './components/AdvancedParamsCard';
 import Footer from './components/Footer';
-import VeilleurPage from './components/VeilleurPage';
-import DocsPage from './components/DocsPage';
+import VeilleurPage from './components/VeilleurPage_';
+import DocsPage from './components/DocsPage_';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('calc');
