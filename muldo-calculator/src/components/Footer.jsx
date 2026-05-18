@@ -7,7 +7,7 @@ export default function Footer() {
           <a href="https://www.youtube.com/@Chikkinsama" target="_blank" rel="noopener" className="footer-link">
             YouTube
           </a>
-          <a href="https://discord.gg/svv6MAaW" target="_blank" rel="noopener" className="footer-link">
+          <a href="https://discord.gg/NzQdDwR7Xx" target="_blank" rel="noopener" className="footer-link">
             Discord
           </a>
         </div>

@@ -196,9 +196,39 @@ export default function VeilleurPage() {
     }, 50);
   }, []);
 
+  const addAccount = () => {
+    if (window.veilleurAddAccount) window.veilleurAddAccount();
+  };
+
   return (
     <div style={{ flex: 1, overflowY: 'auto', background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       <style>{VEILLEUR_CSS}</style>
+      <div style={{
+        padding: '10px 16px',
+        borderBottom: '1px solid var(--border)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'var(--surface)',
+      }}>
+        <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>
+          Gérez vos enclos — double-cliquez sur un nom pour le renommer
+        </span>
+        <button
+          onClick={addAccount}
+          style={{
+            padding: '5px 12px',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+            borderRadius: 4,
+            color: 'var(--text)',
+            fontSize: 12,
+            fontWeight: 500,
+            cursor: 'pointer',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >+ Ajouter un personnage</button>
+      </div>
       <div className="v-shell">
         <div className="v-scroll">
           <main id="veilleur-accounts-root" className="v-accounts" />
@@ -210,7 +240,7 @@ export default function VeilleurPage() {
         fontSize: 12, color: 'var(--text-faint)',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <span>Veilleur des Enclos — Réalisé par <strong style={{ color: 'var(--text-dim)' }}>Mr. B...</strong></span>
+        <span>Veilleur des Enclos — Imaginé par <strong style={{ color: 'var(--text-dim)' }}>Mr. B...</strong></span>
         <span>Outil de gestion des jauges en temps réel</span>
       </footer>
     </div>

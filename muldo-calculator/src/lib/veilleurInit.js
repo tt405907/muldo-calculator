@@ -3,7 +3,7 @@ export function initVeilleur() {
         const MAX_ENCLOSURES = 6;
         const MAX_FUEL = 100000;
         const FUEL_INCREMENT = 10;
-        const DEFAULT_ACCOUNT_NAME = "Panda";
+        const DEFAULT_ACCOUNT_NAME = "Personnage 1";
         const STORAGE_KEY = "le-veilleur-des-enclos-web";
         const TIER_MAX_VALUES = [40000, 70000, 90000, 100000];
         const FUEL_TIER_LABELS = ["T1", "T2", "T3", "T4"];
@@ -163,17 +163,14 @@ export function initVeilleur() {
           if (trimmed) {
             return trimmed;
           }
-          return index === 0 ? DEFAULT_ACCOUNT_NAME : index === 1 ? "Iop" : "Compte " + (index + 1);
+          return "Personnage " + (index + 1);
         }
 
         function nextAccountName() {
           if (!state.accounts.length) {
             return DEFAULT_ACCOUNT_NAME;
           }
-          if (state.accounts.length === 1) {
-            return "Iop";
-          }
-          return "Compte " + (state.accounts.length + 1);
+          return "Personnage " + (state.accounts.length + 1);
         }
 
         function render() {
@@ -1082,5 +1079,11 @@ export function initVeilleur() {
         function escapeAttribute(value) {
           return escapeHtml(value);
         }
+
+        // Expose add account globally for React toolbar
+        window.veilleurAddAccount = function() {
+          state.accounts.push(createAccount(nextAccountName(), 1));
+          saveAndRender();
+        };
       
 }
