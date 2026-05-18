@@ -33,7 +33,7 @@ export default function Header({ activeTab, onTabChange, onMenuToggle }) {
           ▶
         </a>
         <a
-          href="https://discord.gg/svv6MAaW"
+          href="https://discord.gg/NzQdDwR7Xx"
           target="_blank"
           rel="noopener"
           className="header-icon-btn"
