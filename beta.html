@@ -272,12 +272,577 @@
   .adv-icon-btn.active{background:var(--gold-dim);border-color:var(--gold);color:#000;}
   .adv-icon-btn title{display:none;}
 
+
+  /* ── TABS ── */
+  .tab-nav{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:0;position:sticky;top:0;z-index:50;background:var(--bg);}
+  .tab-btn{padding:10px 24px;font-family:'Cinzel Decorative',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-2px;transition:color .2s,border-color .2s;}
+  .tab-btn:hover{color:var(--gold);}
+  .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+  .tab-pane{display:none;overflow:hidden;}
+  .tab-pane.active{display:block;}
+
+  /* ── VEILLEUR styles (scoped) ── */
+  #veilleur-pane {
+    background: #141414;
+    min-height: calc(100vh - 120px);
+    padding: 18px 0 28px;
+  }
+  #veilleur-pane .app-shell {
+    width: min(1480px, calc(100vw - 26px));
+    margin: 0 auto;
+  }
+
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
   .fade{animation:fadeIn .3s ease forwards;}
   @media(max-width:720px){.layout{grid-template-columns:1fr;}.sidebar{position:static;height:auto;}}
+  /* ── VEILLEUR CSS ── */
+
+      :root {
+        --window-bg: #191919;
+        --panel-bg: #24221e;
+        --grid: #101010;
+        --grid-light: #2e2e2e;
+        --grid-out: #3b3b3b;
+        --header-top: #8a301d;
+        --header-bottom: #8a301d;
+        --header-stroke: #652414;
+        --text: #ffffff;
+        --muted: #d8d8d8;
+        --green: #90e052;
+        --green-hi: #baf571;
+        --green-dark: #5f8e38;
+        --yellow: #d6b13f;
+        --yellow-dark: #7b672b;
+        --badge: #8a301d;
+        --badge-stroke: #652414;
+        --row-bg: #24221e;
+        --row-unused: #1d1e20;
+        --bar-bg: #151515;
+        --bar-stroke: #3c3c3c;
+        --button-bg: #4b4740;
+        --input-bg: #373a30;
+        --cell-radius: 8px;
+        --header-height: 52px;
+        --row-height: 70px;
+        --panel-radius: 14px;
+        --font-title: Cambria, Georgia, serif;
+        --font-body: "Trebuchet MS", "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top, rgba(138, 48, 29, 0.14), transparent 20%),
+          linear-gradient(180deg, #171717 0%, #141414 100%);
+        color: var(--text);
+        font-family: var(--font-body);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+          linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+        background-size: 34px 34px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.62), transparent 88%);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app-shell {
+        width: min(1480px, calc(100vw - 26px));
+        margin: 0 auto;
+        padding: 18px 0 28px;
+      }
+
+      .app-scroll {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .accounts-root {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .empty-state {
+        min-width: 1240px;
+        border: 1px solid var(--grid-out);
+        border-radius: var(--panel-radius);
+        padding: 28px;
+        background: var(--panel-bg);
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .account-panel {
+        min-width: 1240px;
+        border: 1px solid var(--grid-out);
+        border-radius: var(--panel-radius);
+        overflow: hidden;
+        background: var(--panel-bg);
+        box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+      }
+
+      .account-header {
+        height: var(--header-height);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 16px 0 22px;
+        background: linear-gradient(90deg, rgba(90, 40, 43, 0.98), rgba(122, 55, 39, 0.98));
+        border-bottom: 1px solid var(--header-stroke);
+      }
+
+      .account-title {
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--text);
+        font-family: var(--font-title);
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+      }
+
+      .account-title:hover {
+        text-decoration: underline;
+        text-decoration-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .header-button {
+        min-width: 36px;
+        min-height: 34px;
+        border: 1px solid var(--header-stroke);
+        border-radius: 10px;
+        background: var(--button-bg);
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .header-button.row-button {
+        min-width: 42px;
+      }
+
+      .header-button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+
+      .rows {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 88px 202px 200px minmax(500px, 1fr) 176px 84px;
+        min-height: var(--row-height);
+        border-top: 1px solid var(--grid);
+        background: var(--row-bg);
+      }
+
+      .row:first-child {
+        border-top: 0;
+      }
+
+      .row.running {
+        background: linear-gradient(180deg, rgba(36, 34, 30, 0.98), rgba(39, 47, 31, 0.98));
+      }
+
+      .row.unused {
+        background: var(--row-unused);
+        color: #b6b6b6;
+      }
+
+      .row.finished {
+        animation: row-finished 1s steps(2) infinite;
+      }
+
+      @keyframes row-finished {
+        0%,
+        100% {
+          background: rgba(82, 45, 39, 0.98);
+        }
+
+        50% {
+          background: var(--row-bg);
+        }
+      }
+
+      .cell {
+        display: flex;
+        align-items: center;
+        min-height: var(--row-height);
+        border-right: 2px solid var(--window-bg);
+        padding: 0 12px;
+      }
+
+      .cell:last-child {
+        border-right: 0;
+      }
+
+      .index-cell {
+        justify-content: center;
+      }
+
+      .row-badge {
+        width: 44px;
+        height: 48px;
+        border-radius: 6px;
+        border: 1px solid var(--badge-stroke);
+        background: linear-gradient(180deg, rgba(138, 48, 29, 0.98), rgba(107, 57, 63, 0.98));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-title);
+        font-size: 1.18rem;
+        font-weight: 700;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      }
+
+      .value-cell {
+        display: grid;
+        grid-template-columns: 62px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+      }
+
+      .value-label {
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .value-input {
+        width: 100%;
+        height: 38px;
+        border: 1px solid var(--bar-stroke);
+        border-radius: var(--cell-radius);
+        background: var(--input-bg);
+        color: var(--text);
+        text-align: center;
+        font-size: 1.04rem;
+      }
+
+      .value-input[disabled] {
+        opacity: 0.72;
+      }
+
+      .value-input:focus {
+        outline: 0;
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(144, 224, 82, 0.12);
+      }
+
+      .fuel-cell {
+        padding-right: 10px;
+      }
+
+      .fuel-layout {
+        display: grid;
+        grid-template-columns: 56px minmax(140px, 1fr) 164px 116px;
+        gap: 10px;
+        width: 100%;
+        align-items: center;
+      }
+
+      .fuel-consumption {
+        color: var(--text);
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .fuel-gauge-wrap {
+        position: relative;
+        height: 34px;
+        display: flex;
+        align-items: center;
+      }
+
+      .fuel-gauge {
+        position: relative;
+        width: 100%;
+        height: 34px;
+        border-radius: 6px;
+        border: 2px solid var(--bar-stroke);
+        background: var(--bar-bg);
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+      }
+
+      .fuel-gauge::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        background: #101010;
+      }
+
+      .fuel-fill {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        bottom: 10px;
+        background: linear-gradient(90deg, #76ac2d, var(--green));
+        box-shadow: inset 0 8px 0 rgba(255, 255, 255, 0.15);
+        transform: scaleX(var(--fuel-scale, 1));
+        transform-origin: left center;
+      }
+
+      .fuel-fill::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 58%);
+      }
+
+      .fuel-cut {
+        position: absolute;
+        top: 10px;
+        bottom: 10px;
+        width: 1px;
+        background: #111111;
+      }
+
+      .fuel-slider {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .fuel-slider:disabled {
+        cursor: default;
+      }
+
+      .fuel-tier-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+      }
+
+      .tier-button {
+        height: 37px;
+        border: 1px solid var(--bar-stroke);
+        border-radius: 5px;
+        background: var(--input-bg);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .tier-button.active {
+        border-color: var(--green);
+        background: linear-gradient(180deg, rgba(63, 93, 40, 0.8), rgba(49, 61, 40, 0.9));
+      }
+
+      .tier-label {
+        color: var(--text);
+        font-weight: 800;
+        font-size: 0.92rem;
+        letter-spacing: 0.02em;
+        line-height: 1;
+      }
+
+      .fuel-entry {
+        width: 100%;
+        height: 38px;
+        border: 1px solid var(--bar-stroke);
+        border-radius: var(--cell-radius);
+        background: var(--input-bg);
+        color: var(--green);
+        text-align: center;
+        font-size: 1.02rem;
+      }
+
+      .fuel-entry:focus {
+        outline: 0;
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(144, 224, 82, 0.12);
+      }
+
+      .timer-button {
+        width: 100%;
+        height: 38px;
+        border: 1px solid var(--grid-out);
+        border-radius: var(--cell-radius);
+        background: rgba(58, 54, 49, 0.9);
+        color: var(--text);
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        padding: 0 14px;
+      }
+
+      .timer-button.short {
+        background: rgba(128, 55, 42, 0.9);
+        border-color: rgba(214, 177, 63, 0.3);
+      }
+
+      .timer-button.medium {
+        background: rgba(90, 76, 36, 0.92);
+        border-color: rgba(214, 177, 63, 0.3);
+      }
+
+      .timer-button.long {
+        background: rgba(46, 60, 34, 0.92);
+        border-color: rgba(144, 224, 82, 0.25);
+      }
+
+      .timer-button.done {
+        animation: timer-done 1s steps(2) infinite;
+      }
+
+      @keyframes timer-done {
+        0%,
+        100% {
+          background: rgba(138, 48, 29, 0.96);
+        }
+
+        50% {
+          background: rgba(36, 34, 30, 0.92);
+        }
+      }
+
+      .inline-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        color: var(--text);
+      }
+
+      .inline-icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .timer-icon {
+        color: var(--muted);
+      }
+
+      .control-icon {
+        color: var(--green-hi);
+      }
+
+      .control-button.active .control-icon {
+        color: var(--green);
+      }
+
+      .timer-value {
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .control-cell {
+        justify-content: center;
+      }
+
+      .control-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 1px solid var(--grid-out);
+        background: var(--input-bg);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .control-button.active {
+        border-color: var(--green);
+      }
+
+      .context-menu {
+        position: fixed;
+        z-index: 1000;
+        min-width: 210px;
+        padding: 6px;
+        border: 1px solid var(--grid-out);
+        border-radius: 10px;
+        background: rgba(33, 31, 27, 0.98);
+        box-shadow: 0 14px 24px rgba(0, 0, 0, 0.42);
+      }
+
+      .context-menu[hidden] {
+        display: none;
+      }
+
+      .context-button {
+        width: 100%;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text);
+        text-align: left;
+        padding: 10px 12px;
+      }
+
+      .context-button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      @media (max-width: 900px) {
+        .app-shell {
+          width: calc(100vw - 12px);
+          padding-top: 12px;
+        }
+      }
+    
 </style>
 </head>
 <body>
+  <!-- BETA BANNER -->
+  <div style="background:linear-gradient(90deg,rgba(234,91,39,.15),rgba(234,91,39,.05));border-bottom:2px solid #EA5B27;padding:10px 32px;display:flex;justify-content:space-between;align-items:center;z-index:1;">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-family:'Cinzel Decorative',serif;font-size:11px;color:#EA5B27;letter-spacing:2px;">⚠ VERSION BÊTA — Fonctionnalités en test</div>
+    <a href="index.html" style="font-size:11px;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:4px 10px;border-radius:2px;">← Retour à la version stable</a>
+  </div>
+
+<!-- TAB NAVIGATION -->
+<div class="tab-nav" id="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('calc')" id="tab-calc">✦ Calculateur</button>
+  <button class="tab-btn" onclick="switchTab('veilleur')" id="tab-veilleur">⏱ Veilleur des Enclos</button>
+</div>
+
+<!-- PANE 1: Calculateur -->
+<div class="tab-pane active" id="pane-calc" style="display:block">
 <div class="layout">
 
 <!-- ══ SIDEBAR ══ -->
@@ -1478,22 +2043,7 @@ recalc();
   </section>
 
   <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="site-footer-credit">
-      <span>Réalisé par</span>
-      <a href="https://www.youtube.com/@Chikkinsama" target="_blank" rel="noopener">✦ Chikkin Sama</a>
-      <div class="site-footer-sub">
-        <a href="https://www.youtube.com/@Chikkinsama" target="_blank" rel="noopener">🎬 Abonnez-vous pour soutenir !</a>
-      </div>
-      <div class="site-footer-sub" style="margin-top:4px">
-        <a href="https://discord.gg/svv6MAaW" target="_blank" rel="noopener">💬 Rejoindre le Discord — signaler une erreur</a>
-      </div>
-    </div>
-    <div class="site-footer-right">
-      <div class="site-footer-update">Dernière mise à jour</div>
-      <div class="site-footer-update"><span>18 mars 2026</span></div>
-    </div>
-  </footer>
+  
 
 
 <script>
@@ -1529,5 +2079,1172 @@ function demoCalc(){
 }
 demoCalc();
 </script>
+
+</div><!-- end .layout -->
+
+
+</div><!-- end #pane-calc -->
+
+
+<!-- PANE 2: Veilleur des Enclos -->
+<div class="tab-pane" id="pane-veilleur" style="display:none">
+  <div id="veilleur-pane">
+    <div class="app-shell">
+      <div class="app-scroll">
+        <main id="accounts-root" class="accounts-root"></main>
+      </div>
+    </div>
+
+    <div id="context-menu" class="context-menu" hidden></div>
+
+    <script>
+      let veilleurInitialized = false;
+      function initVeilleur() {
+      if(veilleurInitialized) return; veilleurInitialized = true;
+        const MAX_ENCLOSURES = 6;
+        const MAX_FUEL = 100000;
+        const FUEL_INCREMENT = 10;
+        const DEFAULT_ACCOUNT_NAME = "Panda";
+        const STORAGE_KEY = "le-veilleur-des-enclos-web";
+        const TIER_MAX_VALUES = [40000, 70000, 90000, 100000];
+        const FUEL_TIER_LABELS = ["T1", "T2", "T3", "T4"];
+
+        const icons = {
+          clock:
+            '<span class="inline-icon timer-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>',
+          play:
+            '<span class="inline-icon control-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 5.5v13l10-6.5z" fill="currentColor"/></svg></span>',
+          pause:
+            '<span class="inline-icon control-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="7" y="5" width="3.8" height="14" rx="1.2" fill="currentColor"/><rect x="13.2" y="5" width="3.8" height="14" rx="1.2" fill="currentColor"/></svg></span>',
+        };
+
+        const dom = {
+          accountsRoot: document.getElementById("accounts-root"),
+          contextMenu: document.getElementById("context-menu"),
+        };
+
+        let state = loadState();
+        let saveTimeoutId = null;
+        let openContext = null;
+
+        processAllRunningRows();
+        render();
+        window.setInterval(tick, 500);
+        document.addEventListener("click", closeContextMenu);
+        window.addEventListener("resize", closeContextMenu);
+        window.addEventListener("scroll", closeContextMenu, true);
+
+        function createDefaultState() {
+          return {
+            accounts: [createAccount(DEFAULT_ACCOUNT_NAME, 4)],
+          };
+        }
+
+        function createAccount(name, activeEnclosures) {
+          return {
+            name,
+            active_enclosures: clamp(activeEnclosures, 1, MAX_ENCLOSURES),
+            rows: Array.from({ length: MAX_ENCLOSURES }, createRow),
+          };
+        }
+
+        function createRow() {
+          return {
+            start: "0",
+            target: "0",
+            fuel_value: 0,
+            remaining_points: 0,
+            running: false,
+            progress_started: false,
+            unused: false,
+            flash_finished: false,
+            end_reason: null,
+            lastTickAtMs: null,
+          };
+        }
+
+        function loadState() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+              return createDefaultState();
+            }
+            const payload = JSON.parse(raw);
+            return normalizeState(payload);
+          } catch (_error) {
+            return createDefaultState();
+          }
+        }
+
+        function normalizeState(payload) {
+          const accounts = Array.isArray(payload && payload.accounts) ? payload.accounts : [];
+          if (!accounts.length) {
+            return createDefaultState();
+          }
+
+          return {
+            accounts: accounts.map((account, index) => normalizeAccount(account, index)),
+          };
+        }
+
+        function normalizeAccount(account, index) {
+          const rowsSource = Array.isArray(account && account.rows) ? account.rows : [];
+          const rows = Array.from({ length: MAX_ENCLOSURES }, (_, rowIndex) =>
+            normalizeRow(rowsSource[rowIndex])
+          );
+          const active = clamp(
+            Number(account && account.active_enclosures) || inferActiveEnclosures(rows),
+            1,
+            MAX_ENCLOSURES
+          );
+
+          return {
+            name: sanitizeAccountName(account && account.name, index),
+            active_enclosures: active,
+            rows,
+          };
+        }
+
+        function normalizeRow(row) {
+          const normalized = createRow();
+          normalized.start = String(row && row.start != null ? row.start : "0");
+          normalized.target = String(row && row.target != null ? row.target : "0");
+          normalized.fuel_value = clampFuel(Number(row && row.fuel_value) || 0);
+          normalized.remaining_points = Math.max(0, Number(row && row.remaining_points) || 0);
+          normalized.progress_started = Boolean(row && row.progress_started);
+          normalized.unused = Boolean(row && row.unused);
+          normalized.flash_finished = Boolean(row && row.flash_finished);
+          normalized.end_reason = row && row.end_reason ? String(row.end_reason) : null;
+
+          if (!rowHasValues(normalized)) {
+            normalized.remaining_points = 0;
+            normalized.progress_started = false;
+            normalized.flash_finished = false;
+            normalized.end_reason = null;
+          } else if (!normalized.progress_started && !normalized.flash_finished) {
+            normalized.remaining_points = requiredPoints(normalized);
+          } else {
+            normalized.remaining_points = clamp(
+              normalized.remaining_points,
+              0,
+              requiredPoints(normalized)
+            );
+          }
+
+          const savedWallTime = Number(row && row.last_tick_wall_time);
+          if (row && row.running && Number.isFinite(savedWallTime) && !normalized.unused) {
+            normalized.running = true;
+            normalized.progress_started = true;
+            normalized.lastTickAtMs = savedWallTime * 1000;
+          }
+
+          return normalized;
+        }
+
+        function inferActiveEnclosures(rows) {
+          let highest = 1;
+          rows.forEach((row, index) => {
+            if (
+              String(row.start || "").trim() ||
+              String(row.target || "").trim() ||
+              row.fuel_value ||
+              row.progress_started ||
+              row.running ||
+              row.unused ||
+              row.flash_finished
+            ) {
+              highest = index + 1;
+            }
+          });
+          return highest;
+        }
+
+        function sanitizeAccountName(name, index) {
+          const trimmed = String(name || "").trim();
+          if (trimmed) {
+            return trimmed;
+          }
+          return index === 0 ? DEFAULT_ACCOUNT_NAME : index === 1 ? "Iop" : "Compte " + (index + 1);
+        }
+
+        function nextAccountName() {
+          if (!state.accounts.length) {
+            return DEFAULT_ACCOUNT_NAME;
+          }
+          if (state.accounts.length === 1) {
+            return "Iop";
+          }
+          return "Compte " + (state.accounts.length + 1);
+        }
+
+        function render() {
+          const focusSnapshot = captureFocusState();
+
+          if (!state.accounts.length) {
+            dom.accountsRoot.innerHTML =
+              '<div class="empty-state">Aucun compte. Ajoute un compte avec le bouton + du bandeau.</div>';
+            return;
+          }
+
+          dom.accountsRoot.innerHTML = state.accounts
+            .map((account, accountIndex) => renderAccount(account, accountIndex))
+            .join("");
+
+          bindEvents();
+          restoreFocusState(focusSnapshot);
+        }
+
+        function renderAccount(account, accountIndex) {
+          const activeRows = account.rows.slice(0, account.active_enclosures);
+
+          return `
+            <section class="account-panel" data-account-index="${accountIndex}">
+              <header class="account-header">
+                <button type="button" class="account-title" data-action="rename-account" data-account-index="${accountIndex}" title="Double-clique pour renommer">${escapeHtml(account.name)}</button>
+                <div class="header-controls">
+                  <button type="button" class="header-button row-button" data-action="add-row" data-account-index="${accountIndex}" ${account.active_enclosures >= MAX_ENCLOSURES ? "disabled" : ""}>E+</button>
+                  <button type="button" class="header-button row-button" data-action="remove-row" data-account-index="${accountIndex}" ${account.active_enclosures <= 1 ? "disabled" : ""}>E-</button>
+                  <button type="button" class="header-button" data-action="add-account" data-account-index="${accountIndex}">+</button>
+                  <button type="button" class="header-button" data-action="remove-account" data-account-index="${accountIndex}" ${state.accounts.length <= 1 ? "disabled" : ""}>-</button>
+                </div>
+              </header>
+              <div class="rows">
+                ${activeRows.map((row, rowIndex) => renderRow(accountIndex, rowIndex, row)).join("")}
+              </div>
+            </section>
+          `;
+        }
+
+        function renderRow(accountIndex, rowIndex, row) {
+          const timerClass = getTimerClass(row);
+          const control = getControlMeta(row);
+          const controlActive = row.running || row.flash_finished || (rowHasValues(row) && row.fuel_value > 0 && !row.unused);
+          const fuelPercent = clamp((row.fuel_value / MAX_FUEL) * 100, 0, 100);
+
+          return `
+            <div
+              class="row ${row.running ? "running" : ""} ${row.flash_finished ? "finished" : ""} ${row.unused ? "unused" : ""}"
+              data-account-index="${accountIndex}"
+              data-row-index="${rowIndex}"
+              data-role="row"
+            >
+              <div class="cell index-cell">
+                <span class="row-badge">${rowIndex + 1}</span>
+              </div>
+
+              <div class="cell value-cell">
+                <span class="value-label">Actuel</span>
+                <input
+                  type="text"
+                  class="value-input"
+                  data-role="start-input"
+                  data-account-index="${accountIndex}"
+                  data-row-index="${rowIndex}"
+                  value="${escapeAttribute(row.start)}"
+                  ${row.unused ? "disabled" : ""}
+                />
+              </div>
+
+              <div class="cell value-cell">
+                <span class="value-label">Cible</span>
+                <input
+                  type="text"
+                  class="value-input"
+                  data-role="target-input"
+                  data-account-index="${accountIndex}"
+                  data-row-index="${rowIndex}"
+                  value="${escapeAttribute(row.target)}"
+                  ${row.unused ? "disabled" : ""}
+                />
+              </div>
+
+              <div class="cell fuel-cell">
+                <div class="fuel-layout">
+                  <span class="fuel-consumption">${getFuelStep(row.fuel_value)}/10s</span>
+
+                  <div class="fuel-gauge-wrap">
+                    <div class="fuel-gauge">
+                      ${row.fuel_value > 0 ? `<div class="fuel-fill" style="--fuel-scale:${fuelPercent / 100}; min-width:${row.fuel_value > 0 ? "2px" : "0"}"></div>` : ""}
+                      <span class="fuel-cut" style="left:40%"></span>
+                      <span class="fuel-cut" style="left:70%"></span>
+                      <span class="fuel-cut" style="left:90%"></span>
+                    </div>
+                    <input
+                      type="range"
+                      class="fuel-slider"
+                      min="0"
+                      max="${MAX_FUEL}"
+                      step="${FUEL_INCREMENT}"
+                      value="${row.fuel_value}"
+                      data-role="fuel-slider"
+                      data-account-index="${accountIndex}"
+                      data-row-index="${rowIndex}"
+                      ${row.unused ? "disabled" : ""}
+                    />
+                  </div>
+
+                  <div class="fuel-tier-grid">
+                    ${TIER_MAX_VALUES.map((cap, tierIndex) => renderTierButton(accountIndex, rowIndex, row, cap, tierIndex + 1)).join("")}
+                  </div>
+
+                  <input
+                    type="text"
+                    class="fuel-entry"
+                    data-role="fuel-input"
+                    data-account-index="${accountIndex}"
+                    data-row-index="${rowIndex}"
+                    value="${escapeAttribute(formatNumber(row.fuel_value))}"
+                    ${row.unused ? "disabled" : ""}
+                  />
+                </div>
+              </div>
+
+              <div class="cell">
+                <button
+                  type="button"
+                  class="timer-button ${timerClass}"
+                  data-action="toggle-row"
+                  data-account-index="${accountIndex}"
+                  data-row-index="${rowIndex}"
+                  ${row.unused ? "disabled" : ""}
+                >
+                  ${icons.clock}
+                  <span class="timer-value" data-role="timer-value">${formatDuration(remainingSeconds(row))}</span>
+                </button>
+              </div>
+
+              <div class="cell control-cell">
+                <button
+                  type="button"
+                  class="control-button ${controlActive ? "active" : ""}"
+                  data-action="toggle-row"
+                  data-account-index="${accountIndex}"
+                  data-row-index="${rowIndex}"
+                  aria-label="${escapeAttribute(control.label)}"
+                  title="${escapeAttribute(control.label)}"
+                  ${row.unused ? "disabled" : ""}
+                >
+                  ${control.icon}
+                </button>
+              </div>
+            </div>
+          `;
+        }
+
+        function renderTierButton(accountIndex, rowIndex, row, cap, tierIndex) {
+          const active = getFuelTierIndex(row.fuel_value) === tierIndex && row.fuel_value > 0;
+
+          return `
+            <button
+              type="button"
+              class="tier-button ${active ? "active" : ""}"
+              data-action="set-tier"
+              data-account-index="${accountIndex}"
+              data-row-index="${rowIndex}"
+              data-tier-cap="${cap}"
+              title="${FUEL_TIER_LABELS[tierIndex - 1]} - ${formatNumber(cap)}"
+              ${row.unused ? "disabled" : ""}
+            >
+              <span class="tier-label">${FUEL_TIER_LABELS[tierIndex - 1]}</span>
+            </button>
+          `;
+        }
+
+        function bindEvents() {
+          document.querySelectorAll("[data-action]").forEach((button) => {
+            if (button.dataset.action === "rename-account") {
+              button.addEventListener("dblclick", handleAction);
+            } else {
+              button.addEventListener("click", handleAction);
+            }
+          });
+
+          document.querySelectorAll("[data-role='start-input'], [data-role='target-input']").forEach((input) => {
+            input.addEventListener("input", handleValueInput);
+            input.addEventListener("blur", handleValueBlur);
+          });
+
+          document.querySelectorAll("[data-role='fuel-input']").forEach((input) => {
+            input.addEventListener("blur", handleFuelBlur);
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleFuelBlur(event);
+              }
+            });
+          });
+
+          document.querySelectorAll("[data-role='fuel-slider']").forEach((slider) => {
+            slider.addEventListener("input", handleFuelSlider);
+          });
+
+          document.querySelectorAll("[data-role='row']").forEach((rowElement) => {
+            rowElement.addEventListener("contextmenu", openRowContextMenu);
+          });
+        }
+
+        function handleAction(event) {
+          event.stopPropagation();
+          const action = event.currentTarget.dataset.action;
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex =
+            event.currentTarget.dataset.rowIndex != null
+              ? Number(event.currentTarget.dataset.rowIndex)
+              : null;
+
+          switch (action) {
+            case "add-row":
+              addRow(accountIndex);
+              break;
+            case "remove-row":
+              removeRow(accountIndex);
+              break;
+            case "add-account":
+              state.accounts.push(createAccount(nextAccountName(), 1));
+              break;
+            case "remove-account":
+              removeAccount(accountIndex);
+              break;
+            case "rename-account":
+              renameAccount(accountIndex);
+              break;
+            case "toggle-row":
+              activateRowControl(accountIndex, rowIndex);
+              break;
+            case "set-tier":
+              setFuelValue(getRow(accountIndex, rowIndex), Number(event.currentTarget.dataset.tierCap));
+              break;
+            default:
+              return;
+          }
+
+          saveAndRender();
+        }
+
+        function handleValueInput(event) {
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+          const row = getRow(accountIndex, rowIndex);
+
+          if (event.currentTarget.dataset.role === "start-input") {
+            row.start = event.currentTarget.value;
+          } else {
+            row.target = event.currentTarget.value;
+          }
+
+          resetRuntimeState(row);
+          scheduleSave();
+        }
+
+        function handleValueBlur(event) {
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+          const row = getRow(accountIndex, rowIndex);
+          const parsed = parseNumber(event.currentTarget.value);
+
+          if (parsed !== null) {
+            if (event.currentTarget.dataset.role === "start-input") {
+              row.start = formatNumber(parsed);
+            } else {
+              row.target = formatNumber(parsed);
+            }
+          }
+
+          resetRuntimeState(row);
+          saveAndRender();
+        }
+
+        function handleFuelBlur(event) {
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+          const row = getRow(accountIndex, rowIndex);
+          const parsed = parseNumber(event.currentTarget.value);
+
+          if (parsed === null) {
+            saveAndRender();
+            return;
+          }
+
+          setFuelValue(row, parsed);
+          saveAndRender();
+        }
+
+        function handleFuelSlider(event) {
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+          const row = getRow(accountIndex, rowIndex);
+          setFuelValue(row, Number(event.currentTarget.value));
+          saveAndRender();
+        }
+
+        function addRow(accountIndex) {
+          const account = state.accounts[accountIndex];
+          if (account && account.active_enclosures < MAX_ENCLOSURES) {
+            account.active_enclosures += 1;
+          }
+        }
+
+        function removeRow(accountIndex) {
+          const account = state.accounts[accountIndex];
+          if (!account || account.active_enclosures <= 1) {
+            return;
+          }
+          const row = account.rows[account.active_enclosures - 1];
+          clearRow(row);
+          account.active_enclosures -= 1;
+        }
+
+        function removeAccount(accountIndex) {
+          if (state.accounts.length <= 1) {
+            window.alert("Il faut garder au moins un compte.");
+            return;
+          }
+          const account = state.accounts[accountIndex];
+          if (!account) {
+            return;
+          }
+          if (!window.confirm("Supprimer " + account.name + " ?")) {
+            return;
+          }
+          state.accounts.splice(accountIndex, 1);
+        }
+
+        function renameAccount(accountIndex) {
+          const account = state.accounts[accountIndex];
+          if (!account) {
+            return;
+          }
+          const value = window.prompt("Nom du compte :", account.name);
+          if (!value) {
+            return;
+          }
+          account.name = sanitizeAccountName(value, accountIndex);
+        }
+
+        function activateRowControl(accountIndex, rowIndex) {
+          const row = getRow(accountIndex, rowIndex);
+          if (!row || row.unused) {
+            return;
+          }
+
+          commitFuelInput(accountIndex, rowIndex);
+
+          if (row.flash_finished && !row.running) {
+            stopAlert(row);
+            return;
+          }
+
+          if (row.running) {
+            pauseRow(row);
+            return;
+          }
+
+          if (!rowHasValues(row)) {
+            window.alert("Renseigne Actuel et Cible.");
+            return;
+          }
+
+          if (row.remaining_points <= 0) {
+            row.remaining_points = requiredPoints(row);
+          }
+
+          if (row.remaining_points <= 0) {
+            row.running = false;
+            row.lastTickAtMs = null;
+            row.flash_finished = false;
+            row.end_reason = null;
+            row.progress_started = false;
+            return;
+          }
+
+          if (row.fuel_value <= 0) {
+            focusFuelInput(accountIndex, rowIndex);
+            return;
+          }
+
+          row.flash_finished = false;
+          row.end_reason = null;
+          row.running = true;
+          row.progress_started = true;
+          row.lastTickAtMs = Date.now();
+        }
+
+        function pauseRow(row) {
+          processRowTicks(row);
+          row.running = false;
+          row.lastTickAtMs = null;
+        }
+
+        function stopAlert(row) {
+          row.running = false;
+          row.lastTickAtMs = null;
+          row.flash_finished = false;
+          row.end_reason = null;
+          row.progress_started = false;
+          row.remaining_points = requiredPoints(row);
+        }
+
+        function clearRow(row) {
+          row.start = "0";
+          row.target = "0";
+          row.fuel_value = 0;
+          resetRuntimeState(row);
+        }
+
+        function toggleUnused(row) {
+          row.unused = !row.unused;
+          if (row.unused) {
+            row.running = false;
+            row.lastTickAtMs = null;
+          } else if (!row.progress_started) {
+            row.remaining_points = requiredPoints(row);
+          }
+          row.flash_finished = false;
+          row.end_reason = null;
+        }
+
+        function resetRuntimeState(row) {
+          row.running = false;
+          row.lastTickAtMs = null;
+          row.flash_finished = false;
+          row.end_reason = null;
+          row.progress_started = false;
+          row.remaining_points = requiredPoints(row);
+        }
+
+        function clearRuntime(row) {
+          row.running = false;
+          row.lastTickAtMs = null;
+          row.progress_started = false;
+          row.flash_finished = false;
+          row.end_reason = null;
+          row.remaining_points = requiredPoints(row);
+        }
+
+        function setFuelValue(row, value) {
+          if (row.running) {
+            processRowTicks(row);
+          }
+
+          row.fuel_value = clampFuel(value);
+          row.flash_finished = false;
+          row.end_reason = null;
+
+          if (!row.progress_started) {
+            row.remaining_points = requiredPoints(row);
+          } else if (row.fuel_value <= 0) {
+            row.running = false;
+            row.lastTickAtMs = null;
+          } else if (row.running) {
+            row.lastTickAtMs = Date.now();
+          }
+        }
+
+        function requiredPoints(row) {
+          const values = getRowValues(row);
+          if (!values) {
+            return 0;
+          }
+          return Math.abs(values.target - values.start);
+        }
+
+        function rowHasValues(row) {
+          return getRowValues(row) !== null;
+        }
+
+        function getRowValues(row) {
+          const start = parseNumber(row.start);
+          const target = parseNumber(row.target);
+          if (start === null || target === null) {
+            return null;
+          }
+          return { start, target };
+        }
+
+        function remainingSeconds(row) {
+          const pointsLeft =
+            row.progress_started || row.running ? row.remaining_points : requiredPoints(row);
+          const result = simulateProgress(row.fuel_value, pointsLeft);
+          let total = result.elapsedSeconds;
+
+          if (row.running && row.lastTickAtMs != null) {
+            const elapsed = Math.max(0, (Date.now() - row.lastTickAtMs) / 1000);
+            total = Math.max(0, Math.ceil(total - elapsed));
+          }
+
+          return total;
+        }
+
+        function processAllRunningRows() {
+          state.accounts.forEach((account) => {
+            account.rows.forEach((row) => {
+              if (row.running) {
+                processRowTicks(row);
+              }
+            });
+          });
+        }
+
+        function tick() {
+          let dirty = false;
+          let needsTimerRefresh = false;
+
+          state.accounts.forEach((account) => {
+            account.rows.slice(0, account.active_enclosures).forEach((row) => {
+              if (row.running) {
+                needsTimerRefresh = true;
+                dirty = processRowTicks(row) || dirty;
+              } else if (row.flash_finished) {
+                needsTimerRefresh = true;
+              }
+            });
+          });
+
+          if (dirty) {
+            scheduleSave();
+          }
+
+          if (document.activeElement instanceof HTMLInputElement) {
+            return;
+          }
+
+          if (dirty || needsTimerRefresh) {
+            render();
+          }
+        }
+
+        function processRowTicks(row) {
+          if (!row.running || row.lastTickAtMs == null) {
+            return false;
+          }
+
+          const elapsedMs = Math.max(0, Date.now() - row.lastTickAtMs);
+          const cycles = Math.floor(elapsedMs / 10000);
+          if (cycles <= 0) {
+            return false;
+          }
+
+          let progressed = 0;
+          const startingFuel = row.fuel_value;
+
+          for (let index = 0; index < cycles; index += 1) {
+            if (row.remaining_points <= 0) {
+              row.running = false;
+              row.flash_finished = true;
+              row.end_reason = "target_reached";
+              break;
+            }
+
+            const step = getFuelStep(row.fuel_value);
+            if (step <= 0) {
+              row.running = false;
+              row.flash_finished = true;
+              row.end_reason = "fuel_empty";
+              break;
+            }
+
+            progressed += Math.min(step, row.remaining_points);
+            row.fuel_value = Math.max(0, row.fuel_value - step);
+            row.remaining_points = Math.max(0, row.remaining_points - step);
+
+            if (row.remaining_points <= 0) {
+              row.running = false;
+              row.flash_finished = true;
+              row.end_reason = "target_reached";
+              break;
+            }
+
+            if (row.fuel_value <= 0) {
+              row.running = false;
+              row.flash_finished = true;
+              row.end_reason = "fuel_empty";
+              break;
+            }
+          }
+
+          advanceStart(row, progressed);
+
+          if (row.running) {
+            row.lastTickAtMs += cycles * 10000;
+          } else {
+            row.lastTickAtMs = null;
+          }
+
+          return row.fuel_value !== startingFuel || progressed > 0 || row.flash_finished;
+        }
+
+        function advanceStart(row, amount) {
+          if (amount <= 0) {
+            return;
+          }
+
+          const values = getRowValues(row);
+          if (!values || values.start === values.target) {
+            return;
+          }
+
+          const direction = values.target > values.start ? 1 : -1;
+          const nextValue =
+            values.start + direction * Math.min(amount, Math.abs(values.target - values.start));
+          row.start = formatNumber(nextValue);
+        }
+
+        function simulateProgress(fuelValue, remainingPoints) {
+          let fuelLeft = clampFuel(fuelValue);
+          let pointsLeft = Math.max(0, Number(remainingPoints) || 0);
+          let elapsedSeconds = 0;
+
+          [
+            [90000, 40],
+            [70000, 30],
+            [40000, 20],
+            [0, 10],
+          ].forEach(([lowerBound, step]) => {
+            if (fuelLeft <= 0 || pointsLeft <= 0 || fuelLeft <= lowerBound) {
+              return;
+            }
+            const fuelTicks = Math.ceil((fuelLeft - lowerBound) / step);
+            const pointTicks = Math.ceil(pointsLeft / step);
+            const ticks = Math.min(fuelTicks, pointTicks);
+            fuelLeft = Math.max(0, fuelLeft - ticks * step);
+            pointsLeft = Math.max(0, pointsLeft - ticks * step);
+            elapsedSeconds += ticks * 10;
+          });
+
+          return { elapsedSeconds, fuelLeft, pointsLeft };
+        }
+
+        function getFuelStep(fuelValue) {
+          const fuel = clampFuel(fuelValue);
+          if (fuel <= 0) {
+            return 0;
+          }
+          if (fuel <= 40000) {
+            return 10;
+          }
+          if (fuel <= 70000) {
+            return 20;
+          }
+          if (fuel <= 90000) {
+            return 30;
+          }
+          return 40;
+        }
+
+        function getFuelTierIndex(fuelValue) {
+          const fuel = clampFuel(fuelValue);
+          if (fuel <= 0) {
+            return 0;
+          }
+          if (fuel <= 40000) {
+            return 1;
+          }
+          if (fuel <= 70000) {
+            return 2;
+          }
+          if (fuel <= 90000) {
+            return 3;
+          }
+          return 4;
+        }
+
+        function getTimerClass(row) {
+          if (row.flash_finished) {
+            return "done";
+          }
+          const seconds = remainingSeconds(row);
+          if (seconds === 0) {
+            return "";
+          }
+          if (seconds <= 180) {
+            return "short";
+          }
+          if (seconds <= 480) {
+            return "medium";
+          }
+          return "long";
+        }
+
+        function getControlMeta(row) {
+          if (row.running) {
+            return { label: "Pause", icon: icons.pause };
+          }
+          if (row.flash_finished) {
+            return { label: "Arreter l'alerte", icon: icons.pause };
+          }
+          return { label: "Demarrer", icon: icons.play };
+        }
+
+        function commitFuelInput(accountIndex, rowIndex) {
+          const input = document.querySelector(
+            "[data-role='fuel-input'][data-account-index='" +
+              accountIndex +
+              "'][data-row-index='" +
+              rowIndex +
+              "']"
+          );
+          if (!(input instanceof HTMLInputElement)) {
+            return;
+          }
+          const parsed = parseNumber(input.value);
+          if (parsed === null) {
+            return;
+          }
+          setFuelValue(getRow(accountIndex, rowIndex), parsed);
+        }
+
+        function focusFuelInput(accountIndex, rowIndex) {
+          const input = document.querySelector(
+            "[data-role='fuel-input'][data-account-index='" +
+              accountIndex +
+              "'][data-row-index='" +
+              rowIndex +
+              "']"
+          );
+          if (!(input instanceof HTMLInputElement)) {
+            return;
+          }
+          input.focus();
+          input.select();
+        }
+
+        function getRow(accountIndex, rowIndex) {
+          return state.accounts[accountIndex].rows[rowIndex];
+        }
+
+        function parseNumber(rawValue) {
+          const cleaned = String(rawValue || "")
+            .trim()
+            .replace(/[\s\u00a0\u202f_,]/g, "");
+
+          if (!cleaned) {
+            return null;
+          }
+
+          const negative = cleaned.startsWith("-");
+          const digits = negative ? cleaned.slice(1) : cleaned;
+          if (!digits || /[^0-9]/.test(digits)) {
+            return null;
+          }
+
+          return Number(cleaned);
+        }
+
+        function formatNumber(value) {
+          if (value == null) {
+            return "";
+          }
+          return Number(value).toLocaleString("fr-FR");
+        }
+
+        function formatDuration(totalSeconds) {
+          const safe = Math.max(0, Math.floor(totalSeconds));
+          const hours = String(Math.floor(safe / 3600)).padStart(2, "0");
+          const minutes = String(Math.floor((safe % 3600) / 60)).padStart(2, "0");
+          const seconds = String(safe % 60).padStart(2, "0");
+          return hours + ":" + minutes + ":" + seconds;
+        }
+
+        function clampFuel(value) {
+          const numeric = Number(value) || 0;
+          return clamp(Math.round(numeric / FUEL_INCREMENT) * FUEL_INCREMENT, 0, MAX_FUEL);
+        }
+
+        function clamp(value, min, max) {
+          return Math.max(min, Math.min(max, value));
+        }
+
+        function buildStoragePayload() {
+          return {
+            accounts: state.accounts.map((account) => ({
+              name: account.name,
+              active_enclosures: account.active_enclosures,
+              rows: account.rows.map((row) => ({
+                start: row.start,
+                target: row.target,
+                fuel_value: row.fuel_value,
+                remaining_points: row.remaining_points,
+                running: row.running,
+                progress_started: row.progress_started,
+                unused: row.unused,
+                flash_finished: row.flash_finished,
+                end_reason: row.end_reason,
+                last_tick_wall_time:
+                  row.running && row.lastTickAtMs != null ? row.lastTickAtMs / 1000 : null,
+              })),
+            })),
+          };
+        }
+
+        function scheduleSave() {
+          if (saveTimeoutId != null) {
+            window.clearTimeout(saveTimeoutId);
+          }
+
+          saveTimeoutId = window.setTimeout(() => {
+            saveTimeoutId = null;
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(buildStoragePayload()));
+            } catch (_error) {
+              // Ignore localStorage errors silently.
+            }
+          }, 200);
+        }
+
+        function saveAndRender() {
+          scheduleSave();
+          render();
+        }
+
+        function captureFocusState() {
+          const active = document.activeElement;
+          if (!(active instanceof HTMLInputElement) || !active.dataset.role) {
+            return null;
+          }
+          return {
+            role: active.dataset.role,
+            accountIndex: active.dataset.accountIndex,
+            rowIndex: active.dataset.rowIndex,
+            selectionStart: active.selectionStart,
+            selectionEnd: active.selectionEnd,
+          };
+        }
+
+        function restoreFocusState(snapshot) {
+          if (!snapshot) {
+            return;
+          }
+
+          const selector = [
+            "[data-role='" + snapshot.role + "']",
+            snapshot.accountIndex != null
+              ? "[data-account-index='" + snapshot.accountIndex + "']"
+              : "",
+            snapshot.rowIndex != null ? "[data-row-index='" + snapshot.rowIndex + "']" : "",
+          ].join("");
+
+          const input = document.querySelector(selector);
+          if (!(input instanceof HTMLInputElement)) {
+            return;
+          }
+
+          input.focus({ preventScroll: true });
+          if (snapshot.selectionStart != null && snapshot.selectionEnd != null) {
+            try {
+              input.setSelectionRange(snapshot.selectionStart, snapshot.selectionEnd);
+            } catch (_error) {
+              return;
+            }
+          }
+        }
+
+        function openRowContextMenu(event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const accountIndex = Number(event.currentTarget.dataset.accountIndex);
+          const rowIndex = Number(event.currentTarget.dataset.rowIndex);
+          const row = getRow(accountIndex, rowIndex);
+
+          openContext = { accountIndex, rowIndex };
+
+          const toggleLabel = row.running ? "Arreter l'enclos" : "Demarrer l'enclos";
+          const unusedLabel = row.unused ? "Reactiver la ligne" : "Griser la ligne";
+
+          dom.contextMenu.innerHTML = [
+            `<button type="button" class="context-button" data-menu-action="toggle">${toggleLabel}</button>`,
+            `<button type="button" class="context-button" data-menu-action="reset-line">Reinitialiser la ligne</button>`,
+            `<button type="button" class="context-button" data-menu-action="toggle-unused">${unusedLabel}</button>`,
+            `<button type="button" class="context-button" data-menu-action="reset-runtime">Remettre le chrono a zero</button>`,
+          ].join("");
+
+          dom.contextMenu.hidden = false;
+
+          const maxLeft = window.innerWidth - 230;
+          const maxTop = window.innerHeight - 210;
+          dom.contextMenu.style.left = Math.min(event.clientX, maxLeft) + "px";
+          dom.contextMenu.style.top = Math.min(event.clientY, maxTop) + "px";
+
+          dom.contextMenu.querySelectorAll("[data-menu-action]").forEach((button) => {
+            button.addEventListener("click", handleContextAction);
+          });
+        }
+
+        function handleContextAction(event) {
+          event.stopPropagation();
+          if (!openContext) {
+            closeContextMenu();
+            return;
+          }
+
+          const { accountIndex, rowIndex } = openContext;
+          const row = getRow(accountIndex, rowIndex);
+
+          switch (event.currentTarget.dataset.menuAction) {
+            case "toggle":
+              activateRowControl(accountIndex, rowIndex);
+              break;
+            case "reset-line":
+              clearRow(row);
+              break;
+            case "toggle-unused":
+              toggleUnused(row);
+              break;
+            case "reset-runtime":
+              clearRuntime(row);
+              break;
+            default:
+              break;
+          }
+
+          closeContextMenu();
+          saveAndRender();
+        }
+
+        function closeContextMenu() {
+          openContext = null;
+          dom.contextMenu.hidden = true;
+          dom.contextMenu.innerHTML = "";
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+        }
+
+        function escapeAttribute(value) {
+          return escapeHtml(value);
+        }
+      }
+    </script>
+  </div>
+</div>    
+<footer style="background:var(--panel-bg);border-top:1px solid var(--grid-out);padding:20px 32px;display:flex;justify-content:center;align-items:center;">
+    
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <span style="font-size:11px;color:#888;letter-spacing:1px;">Réalisé par</span>
+      <span style="font-family:'Cinzel Decorative',Georgia,serif;font-size:15px;color:#C9A227;letter-spacing:1px;">Chikkin SAMA</span>
+    </div>
+  </footer>
+<script>
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>{
+    p.classList.remove('active');
+    p.style.display='none';
+  });
+  document.getElementById('tab-'+name).classList.add('active');
+  const activePane=document.getElementById('pane-'+name);
+  activePane.classList.add('active');
+  activePane.style.display='block';
+  if(name === 'veilleur' && typeof initVeilleur === 'function') initVeilleur();
+}
+</script>
 </body>
-</html>
+</html
+  
+>
