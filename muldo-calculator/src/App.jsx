@@ -10,6 +10,7 @@ import AdvancedParamsCard from './components/AdvancedParamsCard';
 import Footer from './components/Footer';
 import VeilleurPage from './components/VeilleurPage_';
 import DocsPage from './components/DocsPage_';
+import OutilsPage from './components/OutilsPage_';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('calc');
@@ -110,6 +111,7 @@ export default function App() {
 
       {activeTab === 'veilleur' && <VeilleurPage />}
       {activeTab === 'docs' && <DocsPage />}
+      {activeTab === 'outils' && <OutilsPage />}
     </div>
   );
 }
